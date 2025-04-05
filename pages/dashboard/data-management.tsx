@@ -185,7 +185,7 @@ const DataManagementPage: React.FC = () => {
             className={`px-4 py-2 text-sm font-medium border-b-2 ${
               activeTab === 'upload'
                 ? `border-current text-current`
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-black hover:text-gray-700 hover:border-gray-300'
             } transition-colors`}
             style={activeTab === 'upload' ? { color: themeColors.teal } : {}}
           >
@@ -196,7 +196,7 @@ const DataManagementPage: React.FC = () => {
             className={`px-4 py-2 text-sm font-medium border-b-2 ${
               activeTab === 'view'
                 ? `border-current text-current`
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-black hover:text-gray-700 hover:border-gray-300'
             } transition-colors ml-6`}
             style={activeTab === 'view' ? { color: themeColors.teal } : {}}
             disabled={!parsedData}
@@ -208,7 +208,7 @@ const DataManagementPage: React.FC = () => {
             className={`px-4 py-2 text-sm font-medium border-b-2 ${
               activeTab === 'export'
                 ? `border-current text-current`
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-black hover:text-gray-700 hover:border-gray-300'
             } transition-colors ml-6`}
             style={activeTab === 'export' ? { color: themeColors.teal } : {}}
             disabled={!parsedData}
@@ -221,7 +221,7 @@ const DataManagementPage: React.FC = () => {
       {/* Содержимое вкладки загрузки данных */}
       {activeTab === 'upload' && (
         <div className="card">
-          <h2 className="text-xl font-medium mb-4">Загрузка данных</h2>
+          <h2 className="text-xl font-medium mb-4" style={{ color: themeColors.darkTeal }}>Загрузка данных</h2>
           
           <UploadArea onFileUpload={handleFileUpload} />
 
@@ -239,27 +239,27 @@ const DataManagementPage: React.FC = () => {
           )}
           
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
-            <h3 className="text-sm font-medium mb-2">Пример структуры данных</h3>
+            <h3 className="text-sm font-medium mb-2" style={{ color: themeColors.darkTeal }}>Пример структуры данных</h3>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 text-xs">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Дата</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ID товара</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Название</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Категория</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Количество</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Цена</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-black uppercase">Дата</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-black uppercase">ID товара</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-black uppercase">Название</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-black uppercase">Категория</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-black uppercase">Количество</th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-black uppercase">Цена</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   <tr>
-                    <td className="px-3 py-2 whitespace-nowrap">2023-01-01</td>
-                    <td className="px-3 py-2 whitespace-nowrap">1001</td>
-                    <td className="px-3 py-2 whitespace-nowrap">Телевизор Samsung</td>
-                    <td className="px-3 py-2 whitespace-nowrap">Электроника</td>
-                    <td className="px-3 py-2 whitespace-nowrap">15</td>
-                    <td className="px-3 py-2 whitespace-nowrap">45000</td>
+                    <td className="px-3 py-2 whitespace-nowrap" style={{ color: themeColors.darkTeal }}>2023-01-01</td>
+                    <td className="px-3 py-2 whitespace-nowrap" style={{ color: themeColors.darkTeal }}>1001</td>
+                    <td className="px-3 py-2 whitespace-nowrap" style={{ color: themeColors.darkTeal }}>Телевизор Samsung</td>
+                    <td className="px-3 py-2 whitespace-nowrap" style={{ color: themeColors.darkTeal }}>Электроника</td>
+                    <td className="px-3 py-2 whitespace-nowrap" style={{ color: themeColors.darkTeal }}>15</td>
+                    <td className="px-3 py-2 whitespace-nowrap" style={{ color: themeColors.darkTeal }}>45000</td>
                   </tr>
                 </tbody>
               </table>
@@ -319,13 +319,14 @@ const DataManagementPage: React.FC = () => {
           {/* График временного ряда */}
           <div className="card mb-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-medium">Визуализация данных</h2>
+              <h2 className="text-xl font-medium" style={{ color: themeColors.darkTeal }}>Визуализация данных</h2>
               
               <div className="flex space-x-4">
                 <div>
                   <label className="block text-xs text-gray-700 mb-1">Поле даты</label>
                   <select
                     className="p-1 border border-gray-300 rounded-md text-sm"
+                    style={{ color: themeColors.darkTeal }}
                     value={selectedDateField}
                     onChange={(e) => handleFieldChange('date', e.target.value)}
                   >
@@ -339,6 +340,7 @@ const DataManagementPage: React.FC = () => {
                   <label className="block text-xs text-gray-700 mb-1">Поле значения</label>
                   <select
                     className="p-1 border border-gray-300 rounded-md text-sm"
+                    style={{ color: themeColors.darkTeal }}
                     value={selectedValueField}
                     onChange={(e) => handleFieldChange('value', e.target.value)}
                   >
@@ -356,9 +358,10 @@ const DataManagementPage: React.FC = () => {
                 title="Динамика продаж"
                 xAxisLabel="Дата"
                 yAxisLabel="Количество"
+                
               />
             ) : (
-              <div className="text-center py-10 text-gray-500">
+              <div className="text-center py-10 text-black">
                 <p>Невозможно построить график. Проверьте, что выбраны правильные поля даты и значения.</p>
               </div>
             )}
@@ -366,7 +369,7 @@ const DataManagementPage: React.FC = () => {
           
           {/* Фильтры и таблица данных */}
           <div className="card">
-            <h2 className="text-xl font-medium mb-4">Таблица данных</h2>
+            <h2 className="text-xl font-medium mb-4" style={{ color: themeColors.darkTeal }}>Таблица данных</h2>
             
             {parsedData.data.length > 0 && (
               <>
@@ -390,10 +393,10 @@ const DataManagementPage: React.FC = () => {
       {/* Содержимое вкладки экспорта данных */}
       {activeTab === 'export' && parsedData && (
         <div className="card">
-          <h2 className="text-xl font-medium mb-4">Экспорт данных</h2>
+          <h2 className="text-xl font-medium mb-4" style={{ color: themeColors.darkTeal }}>Экспорт данных</h2>
           
           <div className="mb-6">
-            <h3 className="text-sm font-medium mb-2">Выберите данные для экспорта</h3>
+            <h3 className="text-sm font-medium mb-2" style={{ color: themeColors.darkTeal }}>Выберите данные для экспорта</h3>
             <div className="space-y-3">
               <div className="flex items-center">
                 <input
@@ -422,7 +425,7 @@ const DataManagementPage: React.FC = () => {
           </div>
 
           <div className="mb-6">
-            <h3 className="text-sm font-medium mb-2">Формат файла</h3>
+            <h3 className="text-sm font-medium mb-2" style={{ color: themeColors.darkTeal }}>Формат файла</h3>
             <div className="flex space-x-4">
               <button className="px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 CSV
@@ -437,7 +440,7 @@ const DataManagementPage: React.FC = () => {
           </div>
 
           <div className="mb-6">
-            <h3 className="text-sm font-medium mb-2">Дополнительные опции</h3>
+            <h3 className="text-sm font-medium mb-2" style={{ color: themeColors.darkTeal }}>Дополнительные опции</h3>
             <div className="space-y-3">
               <div className="flex items-center">
                 <input

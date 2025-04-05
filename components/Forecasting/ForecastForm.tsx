@@ -83,7 +83,7 @@ const ForecastForm: React.FC<ForecastFormProps> = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <h3 className="text-sm font-medium mb-2">Выбор данных</h3>
+        <h3 className="text-sm font-medium mb-2" style={{ color: themeColors.darkTeal }}>Выбор данных</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -91,6 +91,7 @@ const ForecastForm: React.FC<ForecastFormProps> = ({
             </label>
             <select 
               className="block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+              style={{ color: themeColors.darkTeal }}
               value={dateField}
               onChange={(e) => setDateField(e.target.value)}
               required
@@ -114,6 +115,7 @@ const ForecastForm: React.FC<ForecastFormProps> = ({
             </label>
             <select 
               className="block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+              style={{ color: themeColors.darkTeal }}
               value={valueField}
               onChange={(e) => setValueField(e.target.value)}
               required
@@ -134,7 +136,7 @@ const ForecastForm: React.FC<ForecastFormProps> = ({
       </div>
       
       <div>
-        <h3 className="text-sm font-medium mb-2">Настройки прогноза</h3>
+        <h3 className="text-sm font-medium mb-2" style={{ color: themeColors.darkTeal }}>Настройки прогноза</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -142,6 +144,7 @@ const ForecastForm: React.FC<ForecastFormProps> = ({
             </label>
             <select 
               className="block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+              style={{ color: themeColors.darkTeal }}
               value={forecastMethod}
               onChange={(e) => setForecastMethod(e.target.value as ForecastOptions['method'])}
             >
@@ -160,12 +163,14 @@ const ForecastForm: React.FC<ForecastFormProps> = ({
               <input
                 type="number"
                 min="1"
+                style={{ color: themeColors.darkTeal }}
                 value={forecastPeriods}
                 onChange={(e) => setForecastPeriods(parseInt(e.target.value) || 1)}
                 className="block w-20 p-2 border border-gray-300 rounded-md shadow-sm"
               />
               <select 
                 className="ml-2 block w-32 p-2 border border-gray-300 rounded-md shadow-sm"
+                style={{ color: themeColors.darkTeal }}
                 value={periodUnit}
                 onChange={(e) => setPeriodUnit(e.target.value as 'days' | 'weeks' | 'months')}
               >
@@ -235,6 +240,7 @@ const ForecastForm: React.FC<ForecastFormProps> = ({
               {confidenceInterval && (
                 <select 
                   className="block w-32 p-2 border border-gray-300 rounded-md shadow-sm"
+                  style={{ color: themeColors.darkTeal }}
                   value={confidenceLevel}
                   onChange={(e) => setConfidenceLevel(parseFloat(e.target.value))}
                 >

@@ -10,7 +10,8 @@ import {
   Legend, 
   ResponsiveContainer,
   Area,
-  ReferenceLine
+  ReferenceLine,
+  LegendType
 } from 'recharts';
 
 // Определяем интерфейс для точки временного ряда
@@ -142,7 +143,7 @@ const ForecastChart: React.FC<ForecastChartProps> = ({
               tick={{ fontSize: 12 }}
             />
             <Tooltip 
-              formatter={(value: number, name: string) => {
+              formatter={(value: any, name: string) => {
                 if (name === 'historical') return [`${value}`, 'Исторические данные'];
                 if (name === 'forecast') return [`${value}`, 'Прогноз'];
                 if (name === 'ci') return [`${value}`, 'Доверительный интервал'];
@@ -155,7 +156,11 @@ const ForecastChart: React.FC<ForecastChartProps> = ({
                 { value: 'Исторические данные', type: 'line', color: themeColors.bluishGray },
                 { value: 'Прогноз', type: 'line', color: themeColors.teal },
                 ...(confidenceInterval ? [{ value: `Доверительный интервал (${confidenceInterval.confidence * 100}%)`, type: 'area', color: themeColors.gray }] : [])
-              ]}
+              ].map(item => ({
+                value: item.value,
+                type: item.type as LegendType,
+                color: item.color
+              }))}
             />
             
             {/* Разделительная линия между историческими данными и прогнозом */}

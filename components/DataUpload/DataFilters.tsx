@@ -137,6 +137,7 @@ const DataFilters: React.FC<DataFiltersProps> = ({ data, fields, onFilter }) => 
           <input
             type={fieldType === 'date' ? 'date' : 'text'}
             className="flex-1 p-2 border border-gray-300 rounded-md"
+            style={{ color: themeColors.darkTeal }}
             value={filterValue}
             onChange={(e) => setFilterValue(e.target.value)}
             placeholder="От"
@@ -144,6 +145,7 @@ const DataFilters: React.FC<DataFiltersProps> = ({ data, fields, onFilter }) => 
           <input
             type={fieldType === 'date' ? 'date' : 'text'}
             className="flex-1 p-2 border border-gray-300 rounded-md"
+            style={{ color: themeColors.darkTeal }}
             value={filterValueEnd}
             onChange={(e) => setFilterValueEnd(e.target.value)}
             placeholder="До"
@@ -186,13 +188,14 @@ const DataFilters: React.FC<DataFiltersProps> = ({ data, fields, onFilter }) => 
   
   return (
     <div className="mb-6">
-      <h3 className="text-sm font-medium mb-3">Фильтры данных</h3>
+      <h3 className="text-sm font-medium mb-3" style={{ color: themeColors.darkTeal }}>Фильтры данных</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         <div>
           <label className="block text-xs text-gray-700 mb-1">Поле</label>
           <select
             className="w-full p-2 border border-gray-300 rounded-md"
+            style={{ color: themeColors.darkTeal }}
             value={activeField}
             onChange={(e) => setActiveField(e.target.value)}
           >
@@ -208,6 +211,7 @@ const DataFilters: React.FC<DataFiltersProps> = ({ data, fields, onFilter }) => 
           <label className="block text-xs text-gray-700 mb-1">Оператор</label>
           <select
             className="w-full p-2 border border-gray-300 rounded-md"
+            style={{ color: themeColors.darkTeal }}
             value={activeOperator}
             onChange={(e) => setActiveOperator(e.target.value as FilterOptions['operator'])}
           >
@@ -266,7 +270,7 @@ const DataFilters: React.FC<DataFiltersProps> = ({ data, fields, onFilter }) => 
                 <span>{String(filter.value)}</span>
                 {filter.valueEnd && <span> - {String(filter.valueEnd)}</span>}
                 <button
-                  className="ml-2 text-gray-500 hover:text-gray-700"
+                  className="ml-2 text-black hover:text-gray-700"
                   onClick={() => removeFilter(index)}
                 >
                   ✕

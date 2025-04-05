@@ -251,7 +251,7 @@ const ForecastingPage: React.FC = () => {
             className={`px-4 py-2 text-sm font-medium border-b-2 ${
               activeTab === 'create'
                 ? `border-current text-current`
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-black hover:text-gray-700 hover:border-gray-300'
             } transition-colors`}
             style={activeTab === 'create' ? { color: themeColors.teal } : {}}
           >
@@ -262,7 +262,7 @@ const ForecastingPage: React.FC = () => {
             className={`px-4 py-2 text-sm font-medium border-b-2 ${
               activeTab === 'results'
                 ? `border-current text-current`
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-black hover:text-gray-700 hover:border-gray-300'
             } transition-colors ml-6`}
             style={activeTab === 'results' ? { color: themeColors.teal } : {}}
           >
@@ -273,7 +273,7 @@ const ForecastingPage: React.FC = () => {
             className={`px-4 py-2 text-sm font-medium border-b-2 ${
               activeTab === 'settings'
                 ? `border-current text-current`
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-black hover:text-gray-700 hover:border-gray-300'
             } transition-colors ml-6`}
             style={activeTab === 'settings' ? { color: themeColors.teal } : {}}
           >
@@ -287,7 +287,7 @@ const ForecastingPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-1">
             <div className="card">
-              <h2 className="text-lg font-medium mb-4">Параметры прогноза</h2>
+              <h2 className="text-lg font-medium mb-4" style={{ color: themeColors.darkTeal }}>Параметры прогноза</h2>
               
               {error && (
                 <div className="bg-red-50 text-red-700 p-4 rounded-md mb-4">
@@ -319,7 +319,7 @@ const ForecastingPage: React.FC = () => {
   
           <div className="md:col-span-2">
             <div className="card">
-              <h2 className="text-lg font-medium mb-4">Предварительный анализ данных</h2>
+              <h2 className="text-lg font-medium mb-4" style={{ color: themeColors.darkTeal }}>Предварительный анализ данных</h2>
               
               {!parsedData ? (
                 <div className="bg-gray-50 rounded-lg p-4 mb-4">
@@ -331,33 +331,33 @@ const ForecastingPage: React.FC = () => {
                 <>
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-sm font-medium mb-2">Исторические данные</h3>
+                      <h3 className="text-sm font-medium mb-2" style={{ color: themeColors.darkTeal }}>Исторические данные</h3>
                       <div className="h-64 rounded">
                         {/* Здесь будет график исторических данных */}
                         <div className="bg-gray-100 h-full flex items-center justify-center">
-                          <p className="text-gray-500">Выберите поля даты и значения для просмотра графика</p>
+                          <p className="text-black">Выберите поля даты и значения для просмотра графика</p>
                         </div>
                       </div>
                     </div>
   
                     <div>
-                      <h3 className="text-sm font-medium mb-2">Статистика</h3>
+                      <h3 className="text-sm font-medium mb-2" style={{ color: themeColors.darkTeal }}>Статистика</h3>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-white border border-gray-200 rounded-lg p-4">
-                          <p className="text-xs text-gray-500 mb-1">Количество записей</p>
+                          <p className="text-xs text-black mb-1">Количество записей</p>
                           <p className="text-lg font-semibold" style={{ color: themeColors.bluishGray }}>{parsedData.data.length}</p>
                         </div>
                         <div className="bg-white border border-gray-200 rounded-lg p-4">
-                          <p className="text-xs text-gray-500 mb-1">Доступные поля</p>
+                          <p className="text-xs text-black mb-1">Доступные поля</p>
                           <p className="text-lg font-semibold" style={{ color: themeColors.bluishGray }}>{parsedData.fields.length}</p>
                         </div>
                         <div className="bg-white border border-gray-200 rounded-lg p-4">
-                          <p className="text-xs text-gray-500 mb-1">Диапазон дат</p>
+                          <p className="text-xs text-black mb-1">Диапазон дат</p>
                           <p className="text-sm font-semibold" style={{ color: themeColors.bluishGray }}>
-                            {parsedData.data.length > 0 ? (
-                              <>
-                                {new Date(parsedData.data[0].date).toLocaleDateString()} - {new Date(parsedData.data[parsedData.data.length - 1].date).toLocaleDateString()}
-                              </>
+                          {parsedData.data.length > 0 ? (
+                            <>
+                              {new Date(parsedData.data[0].date || '').toLocaleDateString()} - {new Date(parsedData.data[parsedData.data.length - 1].date || '').toLocaleDateString()}
+                            </>
                             ) : 'Н/Д'}
                           </p>
                         </div>
@@ -389,7 +389,7 @@ const ForecastingPage: React.FC = () => {
                 
                 <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <p className="text-xs text-gray-500 mb-1">Метод прогнозирования</p>
+                    <p className="text-xs text-black mb-1">Метод прогнозирования</p>
                     <p className="text-md font-semibold" style={{ color: themeColors.bluishGray }}>
                       {currentForecast.method === 'linear' ? 'Линейная регрессия' : 
                        currentForecast.method === 'exp_smoothing' ? 'Экспоненциальное сглаживание' : 
@@ -397,13 +397,13 @@ const ForecastingPage: React.FC = () => {
                     </p>
                   </div>
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <p className="text-xs text-gray-500 mb-1">Точность модели</p>
+                    <p className="text-xs text-black mb-1">Точность модели</p>
                     <p className="text-md font-semibold" style={{ color: themeColors.teal }}>
                       {(currentForecast.accuracy * 100).toFixed(2)}%
                     </p>
                   </div>
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <p className="text-xs text-gray-500 mb-1">Горизонт прогноза</p>
+                    <p className="text-xs text-black mb-1">Горизонт прогноза</p>
                     <p className="text-md font-semibold" style={{ color: themeColors.bluishGray }}>
                       {currentForecast.forecastData.length} дней
                     </p>
@@ -412,7 +412,7 @@ const ForecastingPage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-black">
               {forecastHistory.length === 0 ? (
                 <p>У вас пока нет прогнозов. Создайте новый прогноз на вкладке "Создать прогноз".</p>
               ) : (
@@ -433,7 +433,7 @@ const ForecastingPage: React.FC = () => {
                       <div>
                         <span className="text-sm font-medium">Прогноз от {forecast.date.toLocaleDateString()}</span>
                         <span className="mx-2 text-gray-400">•</span>
-                        <span className="text-sm text-gray-500">Поля: {forecast.dateField} и {forecast.valueField}</span>
+                        <span className="text-sm text-black">Поля: {forecast.dateField} и {forecast.valueField}</span>
                       </div>
                       <div className="flex items-center">
                         <span 

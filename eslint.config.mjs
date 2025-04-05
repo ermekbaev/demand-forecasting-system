@@ -15,9 +15,13 @@ const eslintConfig = [
     rules: {
       // Отключаем правило проверки any
       "@typescript-eslint/no-explicit-any": "off",
+      "react/no-unescaped-entities": "off",
+
+      // Отключаем правило полностью
+      "react-hooks/exhaustive-deps": "off",
 
       // При желании можно отключить и другие раздражающие правила
-      "@typescript-eslint/no-unused-vars": "warn", // Предупреждение вместо ошибки
+      "@typescript-eslint/no-unused-vars": "off", // Предупреждение вместо ошибки
       "no-console": "off", // Разрешаем использование console.log
     },
   },

@@ -15,7 +15,7 @@ const SettingsPage: React.FC = () => {
             className={`px-4 py-2 text-sm font-medium border-b-2 ${
               activeTab === 'general'
                 ? `border-current text-current`
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-black hover:text-gray-700 hover:border-gray-300'
             } transition-colors`}
             style={activeTab === 'general' ? { color: themeColors.teal } : {}}
           >
@@ -26,7 +26,7 @@ const SettingsPage: React.FC = () => {
             className={`px-4 py-2 text-sm font-medium border-b-2 ${
               activeTab === 'appearance'
                 ? `border-current text-current`
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-black hover:text-gray-700 hover:border-gray-300'
             } transition-colors ml-6`}
             style={activeTab === 'appearance' ? { color: themeColors.teal } : {}}
           >
@@ -37,7 +37,7 @@ const SettingsPage: React.FC = () => {
             className={`px-4 py-2 text-sm font-medium border-b-2 ${
               activeTab === 'accounts'
                 ? `border-current text-current`
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-black hover:text-gray-700 hover:border-gray-300'
             } transition-colors ml-6`}
             style={activeTab === 'accounts' ? { color: themeColors.teal } : {}}
           >
@@ -49,7 +49,7 @@ const SettingsPage: React.FC = () => {
       {/* Общие настройки */}
       {activeTab === 'general' && (
         <div className="card">
-          <h2 className="text-lg font-medium mb-6">Общие настройки</h2>
+          <h2 className="text-lg font-medium mb-6" style={{ color: themeColors.darkTeal }}>Общие настройки</h2>
           
           <div className="space-y-6">
             <div className="border-b border-gray-200 pb-6">
@@ -59,7 +59,7 @@ const SettingsPage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Формат даты
                   </label>
-                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" style={{ color: themeColors.darkTeal }}>
                     <option value="DD.MM.YYYY">ДД.ММ.ГГГГ</option>
                     <option value="MM.DD.YYYY">ММ.ДД.ГГГГ</option>
                     <option value="YYYY-MM-DD">ГГГГ-ММ-ДД</option>
@@ -69,7 +69,7 @@ const SettingsPage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Разделитель в CSV
                   </label>
-                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" style={{ color: themeColors.darkTeal }}>
                     <option value=",">Запятая (,)</option>
                     <option value=";">Точка с запятой (;)</option>
                     <option value="\t">Табуляция</option>
@@ -79,7 +79,7 @@ const SettingsPage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Формат чисел
                   </label>
-                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" style={{ color: themeColors.darkTeal }}>
                     <option value="1,000.00">1,000.00</option>
                     <option value="1 000,00">1 000,00</option>
                     <option value="1.000,00">1.000,00</option>
@@ -89,7 +89,7 @@ const SettingsPage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Единицы измерения
                   </label>
-                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" style={{ color: themeColors.darkTeal }}>
                     <option value="RUB">Рубли (₽)</option>
                     <option value="USD">Доллары ($)</option>
                     <option value="EUR">Евро (€)</option>
@@ -108,11 +108,12 @@ const SettingsPage: React.FC = () => {
                   <div className="flex items-center">
                     <input
                       type="number"
+                      style={{ color: themeColors.darkTeal }}
                       min="1"
                       defaultValue="30"
                       className="block w-20 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     />
-                    <select className="ml-2 block w-32 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <select className="ml-2 block w-32 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" style={{ color: themeColors.darkTeal }}>
                       <option value="days">Дней</option>
                       <option value="weeks">Недель</option>
                       <option value="months">Месяцев</option>
@@ -123,7 +124,7 @@ const SettingsPage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Метод прогнозирования по умолчанию
                   </label>
-                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" style={{ color: themeColors.darkTeal }}>
                     <option value="auto">Автоматический выбор</option>
                     <option value="linear">Линейная регрессия</option>
                     <option value="arima">ARIMA</option>
@@ -173,7 +174,7 @@ const SettingsPage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Частота резервного копирования
                   </label>
-                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" style={{ color: themeColors.darkTeal }}>
                     <option value="daily">Ежедневно</option>
                     <option value="weekly">Еженедельно</option>
                     <option value="monthly">Ежемесячно</option>
@@ -202,7 +203,7 @@ const SettingsPage: React.FC = () => {
       {/* Настройки внешнего вида */}
       {activeTab === 'appearance' && (
         <div className="card">
-          <h2 className="text-lg font-medium mb-6">Настройки внешнего вида</h2>
+          <h2 className="text-lg font-medium mb-6" style={{ color: themeColors.darkTeal }}>Настройки внешнего вида</h2>
           
           <div className="space-y-6">
             <div className="border-b border-gray-200 pb-6">
@@ -210,15 +211,15 @@ const SettingsPage: React.FC = () => {
               <div className="grid grid-cols-3 gap-4">
                 <div className="border p-4 rounded-lg cursor-pointer bg-white border-indigo-500 ring-2 ring-indigo-500">
                   <div className="h-20 bg-white border border-gray-200 rounded-md mb-2"></div>
-                  <p className="text-sm font-medium">Светлая</p>
+                  <p className="text-sm font-medium" style={{ color: themeColors.darkTeal }}>Светлая</p>
                 </div>
                 <div className="border p-4 rounded-lg cursor-pointer">
                   <div className="h-20 bg-gray-800 border border-gray-700 rounded-md mb-2"></div>
-                  <p className="text-sm font-medium">Темная</p>
+                  <p className="text-sm font-medium" style={{ color: themeColors.darkTeal }}>Темная</p>
                 </div>
                 <div className="border p-4 rounded-lg cursor-pointer">
                   <div className="h-20 bg-gradient-to-b from-white to-gray-800 border border-gray-300 rounded-md mb-2"></div>
-                  <p className="text-sm font-medium">По умолчанию системы</p>
+                  <p className="text-sm font-medium" style={{ color: themeColors.darkTeal }}>По умолчанию системы</p>
                 </div>
               </div>
             </div>
@@ -254,7 +255,7 @@ const SettingsPage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Размер шрифта
                   </label>
-                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <select className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" style={{ color: themeColors.darkTeal }}>
                     <option value="sm">Маленький</option>
                     <option value="md" selected>Средний</option>
                     <option value="lg">Большой</option>
@@ -273,7 +274,7 @@ const SettingsPage: React.FC = () => {
                     <div className="h-16 w-1/6 bg-gray-200 float-left"></div>
                     <div className="h-16 w-5/6 bg-white float-left"></div>
                   </div>
-                  <p className="text-sm font-medium">Боковое меню</p>
+                  <p className="text-sm font-medium" style={{ color: themeColors.darkTeal }}>Боковое меню</p>
                 </div>
                 <div className="border p-4 rounded-lg cursor-pointer">
                   <div className="h-20 bg-white rounded-md mb-2 overflow-hidden">
@@ -281,7 +282,7 @@ const SettingsPage: React.FC = () => {
                     <div className="h-4 w-full bg-gray-200 mt-1"></div>
                     <div className="h-11 w-full bg-white"></div>
                   </div>
-                  <p className="text-sm font-medium">Верхнее меню</p>
+                  <p className="text-sm font-medium" style={{ color: themeColors.darkTeal }}>Верхнее меню</p>
                 </div>
               </div>
             </div>
@@ -301,7 +302,7 @@ const SettingsPage: React.FC = () => {
       {/* Настройки учетных записей */}
       {activeTab === 'accounts' && (
         <div className="card">
-          <h2 className="text-lg font-medium mb-6">Настройки учетной записи</h2>
+          <h2 className="text-lg font-medium mb-6" style={{ color: themeColors.darkTeal }}>Настройки учетной записи</h2>
           
           <div className="space-y-6">
             <div className="border-b border-gray-200 pb-6">
@@ -312,7 +313,7 @@ const SettingsPage: React.FC = () => {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-900">Пользователь Системы</p>
-                  <p className="text-sm text-gray-500">user@example.com</p>
+                  <p className="text-sm text-black">user@example.com</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -322,6 +323,7 @@ const SettingsPage: React.FC = () => {
                   </label>
                   <input
                     type="text"
+                    style={{ color: themeColors.darkTeal }}
                     defaultValue="Пользователь"
                     className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
@@ -332,6 +334,7 @@ const SettingsPage: React.FC = () => {
                   </label>
                   <input
                     type="text"
+                    style={{ color: themeColors.darkTeal }}
                     defaultValue="Системы"
                     className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
@@ -342,6 +345,7 @@ const SettingsPage: React.FC = () => {
                   </label>
                   <input
                     type="email"
+                    style={{ color: themeColors.darkTeal }}
                     defaultValue="user@example.com"
                     className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
@@ -352,6 +356,7 @@ const SettingsPage: React.FC = () => {
                   </label>
                   <input
                     type="tel"
+                    style={{ color: themeColors.darkTeal }}
                     defaultValue="+7 (999) 123-45-67"
                     className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
@@ -368,7 +373,7 @@ const SettingsPage: React.FC = () => {
                   </label>
                   <input
                     type="password"
-                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black"
                   />
                 </div>
                 <div>
@@ -377,7 +382,7 @@ const SettingsPage: React.FC = () => {
                   </label>
                   <input
                     type="password"
-                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black"
                   />
                 </div>
                 <div>
@@ -386,7 +391,7 @@ const SettingsPage: React.FC = () => {
                   </label>
                   <input
                     type="password"
-                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black"
                   />
                 </div>
                 <div className="mt-2">

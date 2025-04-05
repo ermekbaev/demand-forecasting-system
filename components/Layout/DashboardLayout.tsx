@@ -38,7 +38,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </main>
         
         {/* Footer */}
-        <footer className="py-4 px-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+        <footer className="py-4 px-6 border-t border-gray-200 text-center text-black text-sm">
           © {new Date().getFullYear()} Система прогнозирования спроса. Все права защищены.
         </footer>
       </div>

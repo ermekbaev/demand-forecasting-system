@@ -112,7 +112,7 @@ const UploadArea: React.FC<UploadAreaProps> = ({
           </button>{" "}
           или перетащите файл в эту область
         </p>
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs text-black">
           Поддерживаемые форматы: CSV, Excel (XLS, XLSX)
         </p>
         <input

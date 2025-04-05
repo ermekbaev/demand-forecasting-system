@@ -22,7 +22,7 @@ const DataTable: React.FC<DataTableProps> = ({
   
   // Сортировка и пагинация данных
   const displayData = useMemo(() => {
-    let processedData = [...data];
+  const processedData = [...data];
     
     // Сортировка
     if (sortField) {
@@ -81,7 +81,7 @@ const DataTable: React.FC<DataTableProps> = ({
     const maxVisiblePages = 5; // Максимальное количество отображаемых номеров страниц
     
     let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
     
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -135,7 +135,7 @@ const DataTable: React.FC<DataTableProps> = ({
   
   if (!data.length) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-black">
         Нет данных для отображения
       </div>
     );
@@ -150,7 +150,7 @@ const DataTable: React.FC<DataTableProps> = ({
               {fields.map(field => (
                 <th 
                   key={field}
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort(field)}
                 >
                   <div className="flex items-center">
@@ -163,7 +163,7 @@ const DataTable: React.FC<DataTableProps> = ({
                   </div>
                 </th>
               ))}
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-black uppercase tracking-wider">
                 Действия
               </th>
             </tr>
@@ -174,14 +174,14 @@ const DataTable: React.FC<DataTableProps> = ({
                 {fields.map(field => (
                   <td 
                     key={`${rowIndex}-${field}`}
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                    className="px-6 py-4 whitespace-nowrap text-sm text-black"
                   >
                     {row[field] instanceof Date 
                       ? (row[field] as Date).toLocaleDateString() 
                       : String(row[field] ?? '')}
                   </td>
                 ))}
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-black text-right">
                   <button 
                     className="text-sm font-medium mr-3"
                     style={{ color: themeColors.bluishGray }}
