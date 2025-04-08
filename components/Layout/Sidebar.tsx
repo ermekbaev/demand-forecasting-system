@@ -160,25 +160,29 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
 
       <nav className="mt-8">
         <ul className="space-y-2 px-4">
-          {navItems.map((item) => (
-            <li key={item.path}>
-              <Link 
-                href={item.path}
-                className={`flex items-center ${
-                  collapsed ? 'justify-center' : 'justify-start'
-                } py-3 px-4 rounded-md ${
-                  router.pathname === item.path
-                    ? 'bg-opacity-20 bg-white text-white'
-                    : 'text-gray-300 hover:bg-opacity-10 hover:bg-white hover:text-white'
-                } transition-colors`}
-              >
-                <span className="inline-block">{item.icon}</span>
-                {!collapsed && (
-                  <span className="ml-3 text-sm font-medium">{item.name}</span>
-                )}
-              </Link>
-            </li>
-          ))}
+          {navItems.map((item) => {
+            const isActive = router.pathname === item.path;
+            return (
+              <li key={item.path}>
+                <Link 
+                  href={item.path}
+                  className={`flex items-center ${
+                    collapsed ? 'justify-center' : 'justify-start'
+                  } py-3 px-4 rounded-md ${
+                    isActive
+                      ? 'bg-opacity-20 bg-white'
+                      : 'hover:bg-opacity-10 hover:bg-white'
+                  } transition-colors`}
+                  style={{ color: isActive ? themeColors.darkTeal : 'white' }}
+                >
+                  <span className="inline-block">{item.icon}</span>
+                  {!collapsed && (
+                    <span className="ml-3 text-sm font-medium">{item.name}</span>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </aside>
