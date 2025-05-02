@@ -2,7 +2,7 @@
  * Модуль для прогнозирования данных с помощью линейной регрессии
  */
 
-interface DataPoint {
+export interface DataPoint {
     x: number;
     y: number;
   }

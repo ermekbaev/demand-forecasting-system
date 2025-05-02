@@ -17,12 +17,15 @@ const ForecastResultsTab: React.FC<ForecastResultsTabProps> = ({
 }) => {
   // Отображение метода прогнозирования в читаемом виде
   const getForecastMethodName = (method: string): string => {
-    switch (method) {
-      case 'linear': return 'Линейная регрессия';
-      case 'exp_smoothing': return 'Экспоненциальное сглаживание';
-      case 'arima': return 'ARIMA';
-      default: return 'Автоматический';
+    if (method === 'linear') return 'Линейная регрессия';
+    if (method === 'arima') return 'ARIMA';
+    if (method && method.includes('exp_smoothing')) {
+      if (method.includes('simple')) return 'Простое экспоненциальное сглаживание';
+      if (method.includes('holt_winters')) return 'Тройное сглаживание (Холта-Винтерса)';
+      if (method.includes('holt')) return 'Двойное сглаживание (Холта)';
+      return 'Экспоненциальное сглаживание';
     }
+    return 'Автоматический';
   };
   
   // Получение стиля для метки точности прогноза
@@ -97,7 +100,7 @@ const ForecastResultsTab: React.FC<ForecastResultsTabProps> = ({
               >
                 <div className="flex justify-between items-center mb-2">
                   <div>
-                    <span className="text-sm font-medium">Прогноз от {forecast.date.toLocaleDateString()}</span>
+                    <span className="text-sm font-medium text-black">Прогноз от {forecast.date.toLocaleDateString()}</span>
                     <span className="mx-2 text-gray-400">•</span>
                     <span className="text-sm text-black">Поля: {forecast.dateField} и {forecast.valueField}</span>
                   </div>

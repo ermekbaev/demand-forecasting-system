@@ -7,19 +7,31 @@ import ViewTab from '@/components/DataManagement/ViewTab';
 import ExportTab from '@/components/DataManagement/ExportTab';
 import { parseCSV, readFileAsText, processTimeSeriesData, ParsedData, ParsedDataRow } from '@/lib/Data/csvParser';
 import { validateData, ValidationResult } from '@/lib/Data/dataValidator';
+import { useData } from '@/Context/DataContext';
+
 
 const DataManagementPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'upload' | 'view' | 'export'>('upload');
   
-  // Состояния для работы с данными
-  const [parsedData, setParsedData] = useState<ParsedData | null>(null);
-  const [filteredData, setFilteredData] = useState<ParsedDataRow[]>([]);
-  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
-  const [timeSeriesData, setTimeSeriesData] = useState<{ date: Date; value: number }[]>([]);
-  const [selectedDateField, setSelectedDateField] = useState<string>('');
-  const [selectedValueField, setSelectedValueField] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  // Используем контекст данных вместо локального состояния
+  const {
+    parsedData,
+    setParsedData,
+    filteredData,
+    setFilteredData,
+    validationResult,
+    setValidationResult,
+    timeSeriesData,
+    setTimeSeriesData,
+    selectedDateField,
+    setSelectedDateField,
+    selectedValueField,
+    setSelectedValueField,
+    isLoading,
+    setIsLoading,
+    error,
+    setError
+  } = useData();
 
   // Обработка загруженного файла
   const handleFileUpload = async (file: File) => {
@@ -49,29 +61,28 @@ const DataManagementPage: React.FC = () => {
       });
       
       // Установка полей по умолчанию если они есть
-      if (dateFieldCandidates.length > 0) {
-        setSelectedDateField(dateFieldCandidates[0]);
-      }
+      const newDateField = dateFieldCandidates.length > 0 ? dateFieldCandidates[0] : '';
+      const newValueField = valueFieldCandidates.length > 0 ? valueFieldCandidates[0] : '';
       
-      if (valueFieldCandidates.length > 0) {
-        setSelectedValueField(valueFieldCandidates[0]);
-      }
+      setSelectedDateField(newDateField);
+      setSelectedValueField(newValueField);
       
       // Валидация данных
       const validationOpts = {
-        requiredFields: [dateFieldCandidates[0], valueFieldCandidates[0]].filter(Boolean),
-        dateField: dateFieldCandidates[0] || '',
-        valueField: valueFieldCandidates[0] || '',
+        requiredFields: [newDateField, newValueField].filter(Boolean),
+        dateField: newDateField || '',
+        valueField: newValueField || '',
       };
       
       const validationResults = validateData(parsedResults, validationOpts);
+      setValidationResult(validationResults);
       
       // Обработка данных временного ряда если есть поля даты и значения
-      if (dateFieldCandidates.length > 0 && valueFieldCandidates.length > 0) {
+      if (newDateField && newValueField) {
         const timeSeries = processTimeSeriesData(
           parsedResults.data,
-          dateFieldCandidates[0],
-          valueFieldCandidates[0]
+          newDateField,
+          newValueField
         );
         setTimeSeriesData(timeSeries);
       }
@@ -79,7 +90,6 @@ const DataManagementPage: React.FC = () => {
       // Сохранение данных и переход к вкладке просмотра
       setParsedData(parsedResults);
       setFilteredData(parsedResults.data);
-      setValidationResult(validationResults);
       
       if (parsedResults.data.length > 0) {
         setActiveTab('view');
@@ -93,7 +103,7 @@ const DataManagementPage: React.FC = () => {
     }
   };
 
-          // Обработка изменения полей для графика временного ряда
+  // Обработка изменения полей для графика временного ряда
   const handleFieldChange = (type: 'date' | 'value', field: string) => {
     if (type === 'date') {
       setSelectedDateField(field);

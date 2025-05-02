@@ -3,6 +3,8 @@ import DashboardLayout from '@/components/Layout/DashboardLayout';
 import { themeColors } from '@/lib/Theme/Colors';
 import { ForecastOptions, ForecastResult, TimeSeriesPoint } from '@/lib/Forecast';
 import { ParsedData } from '@/lib/Data/csvParser';
+import { useData } from '@/Context/DataContext';
+
 
 // Импорт новых компонентов для вкладок
 import CreateForecastTab from '@/components/Forecasting/CreateForecast';
@@ -22,112 +24,24 @@ export interface ForecastData {
 const ForecastingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'create' | 'results' | 'settings'>('create');
 
-  // Состояния для данных и прогнозирования
-  const [parsedData, setParsedData] = useState<ParsedData | null>(null);
-  const [availableFields, setAvailableFields] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [currentForecast, setCurrentForecast] = useState<ForecastResult | null>(null);
-  const [forecastHistory, setForecastHistory] = useState<ForecastData[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  // Используем контекст данных вместо локального состояния
+  const {
+    parsedData,
+    setParsedData,
+    selectedDateField,
+    selectedValueField,
+    timeSeriesData,
+    isLoading,
+    setIsLoading,
+    currentForecast,
+    setCurrentForecast,
+    forecastHistory,
+    addToForecastHistory,
+    error,
+    setError
+  } = useData();
 
-  // Получение данных из локального хранилища при загрузке страницы
-  useEffect(() => {
-    loadSavedData();
-  }, []);
-
-  // Загрузка сохраненных данных из localStorage
-  const loadSavedData = () => {
-    try {
-      // Загрузка основных данных
-      const savedDataStr = localStorage.getItem('parsedData');
-      if (savedDataStr) {
-        const savedData = JSON.parse(savedDataStr);
-        // Восстанавливаем даты в данных
-        restoreDatesInParsedData(savedData);
-        setParsedData(savedData);
-        setAvailableFields(savedData.fields || []);
-      }
-      
-      // Загрузка истории прогнозов
-      const savedForecastsStr = localStorage.getItem('forecastHistory');
-      if (savedForecastsStr) {
-        const savedForecasts = JSON.parse(savedForecastsStr);
-        const restoredForecasts = restoreDatesInForecastHistory(savedForecasts);
-        setForecastHistory(restoredForecasts);
-      }
-    } catch (err) {
-      console.error('Ошибка при загрузке данных:', err);
-      setError('Не удалось загрузить сохраненные данные.');
-    }
-  };
-
-  // Восстановление дат в данных
-  const restoreDatesInParsedData = (savedData: any) => {
-    if (savedData.data && Array.isArray(savedData.data)) {
-      savedData.data = savedData.data.map((row: any) => {
-        const newRow = { ...row };
-        
-        // Преобразуем строковые даты обратно в объекты Date
-        Object.keys(newRow).forEach(key => {
-          const value = newRow[key];
-          if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
-            newRow[key] = new Date(value);
-          }
-        });
-        
-        return newRow;
-      });
-    }
-    return savedData;
-  };
-
-  // Восстановление дат в истории прогнозов
-  const restoreDatesInForecastHistory = (savedForecasts: any[]) => {
-    return savedForecasts.map((forecast: any) => {
-      const restoredForecast = { ...forecast };
-      
-      // Восстанавливаем основную дату
-      restoredForecast.date = new Date(forecast.date);
-      
-      // Восстанавливаем даты в результатах
-      if (forecast.result.originalData) {
-        restoredForecast.result.originalData = forecast.result.originalData.map(
-          (item: any) => ({ ...item, date: new Date(item.date) })
-        );
-      }
-      
-      if (forecast.result.forecastData) {
-        restoredForecast.result.forecastData = forecast.result.forecastData.map(
-          (item: any) => ({ ...item, date: new Date(item.date) })
-        );
-      }
-      
-      if (forecast.result.confidenceInterval) {
-        if (forecast.result.confidenceInterval.upper) {
-          restoredForecast.result.confidenceInterval.upper = forecast.result.confidenceInterval.upper.map(
-            (item: any) => ({ ...item, date: new Date(item.date) })
-          );
-        }
-        
-        if (forecast.result.confidenceInterval.lower) {
-          restoredForecast.result.confidenceInterval.lower = forecast.result.confidenceInterval.lower.map(
-            (item: any) => ({ ...item, date: new Date(item.date) })
-          );
-        }
-      }
-      
-      return restoredForecast;
-    });
-  };
-
-  // Добавление нового прогноза в историю
-  const addToForecastHistory = (newForecast: ForecastData) => {
-    const updatedHistory = [newForecast, ...forecastHistory];
-    setForecastHistory(updatedHistory);
-    localStorage.setItem('forecastHistory', JSON.stringify(updatedHistory));
-  };
-
-  // Загрузка примера данных
+  // Функция для загрузки примера данных, если нет данных
   const loadSampleData = async () => {
     try {
       setIsLoading(true);
@@ -173,10 +87,6 @@ const ForecastingPage: React.FC = () => {
       };
       
       setParsedData(sampleData);
-      setAvailableFields(sampleData.fields);
-      
-      // Сохраняем данные в localStorage
-      localStorage.setItem('parsedData', JSON.stringify(sampleData));
       
     } catch (err) {
       console.error('Ошибка при загрузке примера данных:', err);
@@ -231,7 +141,7 @@ const ForecastingPage: React.FC = () => {
       {activeTab === 'create' && (
         <CreateForecastTab 
           parsedData={parsedData}
-          availableFields={availableFields}
+          availableFields={parsedData?.fields || []}
           isLoading={isLoading}
           error={error}
           setCurrentForecast={setCurrentForecast}

@@ -3,8 +3,10 @@ import ForecastForm from '@/components/Forecasting/ForecastForm';
 import TimeSeriesChart from '@/components/Charts/TimeSeriesChart';
 import { themeColors } from '@/lib/Theme/Colors';
 import { forecastTimeSeries, ForecastOptions, ForecastResult, TimeSeriesPoint } from '@/lib/Forecast';
-import { ParsedData, ParsedDataRow } from '@/lib/Data/csvParser';
+import { ParsedData, ParsedDataRow, processTimeSeriesData } from '@/lib/Data/csvParser';
 import { ForecastData } from '@/pages/dashboard/forecasting';
+import { useData } from '@/Context/DataContext';
+
 
 interface CreateForecastTabProps {
   parsedData: ParsedData | null;
@@ -21,7 +23,7 @@ const CreateForecastTab: React.FC<CreateForecastTabProps> = ({
   parsedData,
   availableFields,
   isLoading: isLoadingProp,
-  error,
+  error: errorProp,
   setCurrentForecast,
   addToForecastHistory,
   loadSampleData,
@@ -29,6 +31,9 @@ const CreateForecastTab: React.FC<CreateForecastTabProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(isLoadingProp);
   const [localError, setLocalError] = useState<string | null>(null);
+  
+  // Используем контекст данных для доступа к временному ряду
+  const { timeSeriesData, selectedDateField, selectedValueField } = useData();
 
   // Обработка создания прогноза
   const handleGenerateForecast = async (
@@ -44,33 +49,41 @@ const CreateForecastTab: React.FC<CreateForecastTabProps> = ({
         throw new Error('Нет доступных данных для прогнозирования');
       }
       
-      // Преобразуем данные в формат временного ряда
-      const timeSeriesData: TimeSeriesPoint[] = parsedData.data
-        .map(row => {
-          const dateValue = row[dateField];
-          const value = Number(row[valueField]);
-          
-          let date: Date | null = null;
-          if (dateValue instanceof Date) {
-            date = dateValue;
-          } else if (typeof dateValue === 'string') {
-            date = new Date(dateValue);
-          }
-          
-          if (date && !isNaN(date.getTime()) && !isNaN(value)) {
-            return { date, value };
-          }
-          return null;
-        })
-        .filter((item): item is TimeSeriesPoint => item !== null)
-        .sort((a, b) => a.date.getTime() - b.date.getTime());
+      // Преобразуем данные в формат временного ряда или используем существующие из контекста
+      let dataForForecast: TimeSeriesPoint[];
       
-      if (timeSeriesData.length < 2) {
+      if (timeSeriesData.length > 0 && dateField === selectedDateField && valueField === selectedValueField) {
+        // Используем уже обработанные данные
+        dataForForecast = timeSeriesData;
+      } else {
+        // Преобразуем данные
+        dataForForecast = parsedData.data
+          .map(row => {
+            const dateValue = row[dateField];
+            const value = Number(row[valueField]);
+            
+            let date: Date | null = null;
+            if (dateValue instanceof Date) {
+              date = dateValue;
+            } else if (typeof dateValue === 'string') {
+              date = new Date(dateValue);
+            }
+            
+            if (date && !isNaN(date.getTime()) && !isNaN(value)) {
+              return { date, value };
+            }
+            return null;
+          })
+          .filter((item): item is TimeSeriesPoint => item !== null)
+          .sort((a, b) => a.date.getTime() - b.date.getTime());
+      }
+      
+      if (dataForForecast.length < 2) {
         throw new Error('Недостаточно данных для прогнозирования. Требуется минимум 2 точки.');
       }
       
       // Выполняем прогнозирование
-      const result = forecastTimeSeries(timeSeriesData, options);
+      const result = forecastTimeSeries(dataForForecast, options);
       
       // Сохраняем результат в текущий прогноз
       setCurrentForecast(result);
@@ -118,9 +131,9 @@ const CreateForecastTab: React.FC<CreateForecastTabProps> = ({
         <div className="card">
           <h2 className="text-lg font-medium mb-4" style={{ color: themeColors.darkTeal }}>Параметры прогноза</h2>
           
-          {(error || localError) && (
+          {(errorProp || localError) && (
             <div className="bg-red-50 text-red-700 p-4 rounded-md mb-4">
-              <p>{error || localError}</p>
+              <p>{errorProp || localError}</p>
             </div>
           )}
           
@@ -162,10 +175,17 @@ const CreateForecastTab: React.FC<CreateForecastTabProps> = ({
                 <div>
                   <h3 className="text-sm font-medium mb-2" style={{ color: themeColors.darkTeal }}>Исторические данные</h3>
                   <div className="h-64 rounded">
-                    {/* Здесь будет график исторических данных */}
-                    <div className="bg-gray-100 h-full flex items-center justify-center">
-                      <p className="text-black">Выберите поля даты и значения для просмотра графика</p>
-                    </div>
+                    {timeSeriesData.length > 0 ? (
+                      <TimeSeriesChart
+                        data={timeSeriesData}
+                        xAxisLabel="Дата"
+                        yAxisLabel="Значение"
+                      />
+                    ) : (
+                      <div className="bg-gray-100 h-full flex items-center justify-center">
+                        <p className="text-black">Выберите поля даты и значения для просмотра графика</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
