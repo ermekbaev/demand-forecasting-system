@@ -1,7 +1,9 @@
 import Papa from 'papaparse';
 
+// Улучшенный интерфейс ParsedDataRow для безопасной работы с разными типами данных
 export interface ParsedDataRow {
   [key: string]: string | number | Date | null;
+  date: Date | string; // Добавляем опциональное поле date для типизации
 }
 
 export interface ParsedData {
@@ -38,8 +40,36 @@ export function parseCSV(csvString: string, options: CSVParserOptions = {}): Par
   
   const result = Papa.parse(csvString, parseOptions);
 
+  // Преобразуем данные для использования строковых дат в формате Date
+  const processedData = (result.data as ParsedDataRow[]).map(row => {
+    const newRow: ParsedDataRow = { ...row };
+    
+    // Ищем поля, которые могут содержать даты
+    Object.keys(newRow).forEach(key => {
+      if (
+        typeof newRow[key] === 'string' && 
+        (
+          key.toLowerCase().includes('date') || 
+          key.toLowerCase().includes('time') ||
+          /^\d{4}-\d{2}-\d{2}/.test(newRow[key] as string) // Проверка на ISO формат даты
+        )
+      ) {
+        try {
+          const dateValue = new Date(newRow[key] as string);
+          if (!isNaN(dateValue.getTime())) {
+            newRow[key] = dateValue;
+          }
+        } catch (e) {
+          // Если не смогли преобразовать в дату, оставляем как есть
+        }
+      }
+    });
+    
+    return newRow;
+  });
+
   return {
-    data: result.data as ParsedDataRow[],
+    data: processedData,
     fields: result.meta.fields || [],
     errors: result.errors,
     meta: result.meta,
