@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { themeColors } from '@/lib/Theme/Colors';
+import { useSettings } from '@/Context/SettingsContext';
 
 // Определение типа для элементов навигации
 type NavItem = {
@@ -17,6 +18,21 @@ type SidebarProps = {
 const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
+  const { appearanceSettings, setAppearanceSettings, applyTheme } = useSettings();
+  
+  // Функция для переключения темы (вынесена из обработчика события)
+  const toggleTheme = () => {
+    const newTheme = appearanceSettings.theme === 'dark' ? 'light' : 'dark';
+    setAppearanceSettings({ ...appearanceSettings, theme: newTheme });
+    applyTheme(newTheme);
+  };
+  
+  // Применяем настройки цвета к сайдбару
+  const sidebarStyle = {
+    backgroundColor: appearanceSettings.theme === 'dark' 
+      ? themeColors.darkest 
+      : '#1a202c' // Темный фон даже в светлой теме для сайдбара
+  };
 
   const navItems: NavItem[] = [
     {
@@ -117,12 +133,31 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
     }
   };
 
+  // Эффект для обновления состояния при изменении маршрута
+  useEffect(() => {
+    // При смене маршрута на мобильных устройствах скрываем сайдбар
+    const handleRouteChange = () => {
+      if (window.innerWidth < 768 && !collapsed) {
+        setCollapsed(true);
+        if (onToggle) {
+          onToggle(true);
+        }
+      }
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router, collapsed, onToggle]);
+
   return (
     <aside 
       className={`${
         collapsed ? 'w-20' : 'w-64'
-      } transition-all duration-300 ease-in-out h-screen fixed top-0 left-0 overflow-y-auto`}
-      style={{ backgroundColor: themeColors.darkest }}
+      } transition-all duration-300 ease-in-out h-screen fixed top-0 left-0 overflow-y-auto z-20`}
+      style={sidebarStyle}
     >
       <div className="h-16 flex items-center justify-between px-6 border-b border-gray-700">
         {!collapsed && (
@@ -173,7 +208,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
                       ? 'bg-opacity-20 bg-white'
                       : 'hover:bg-opacity-10 hover:bg-white'
                   } transition-colors`}
-                  style={{ color: isActive ? themeColors.darkTeal : 'white' }}
+                  style={{ color: isActive ? appearanceSettings.primaryColor || themeColors.teal : 'white' }}
                 >
                   <span className="inline-block">{item.icon}</span>
                   {!collapsed && (
@@ -185,6 +220,39 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
           })}
         </ul>
       </nav>
+      
+      {/* Добавляем элемент для переключения темы в футере сайдбара */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
+        <div className="flex items-center justify-center">
+          <button
+            className="p-2 rounded-full text-white hover:bg-gray-700 transition-colors"
+            onClick={toggleTheme} // Используем функцию toggleTheme вместо inline-функции
+            title={`Переключить на ${appearanceSettings.theme === 'dark' ? 'светлую' : 'темную'} тему`}
+          >
+            {appearanceSettings.theme === 'dark' ? (
+              // Иконка солнца для тёмной темы
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+              </svg>
+            ) : (
+              // Иконка луны для светлой темы
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
     </aside>
   );
 };

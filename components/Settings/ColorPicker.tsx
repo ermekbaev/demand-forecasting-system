@@ -12,15 +12,16 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   onColorSelect 
 }) => {
   return (
-    <div className="flex space-x-3">
+    <div className="flex flex-wrap gap-3">
       {colors.map((color, index) => (
         <div 
           key={index}
-          className={`w-10 h-10 rounded-full border-2 border-white cursor-pointer ${
-            color === selectedColor ? 'ring-2 ring-indigo-500' : ''
+          className={`w-10 h-10 rounded-full border-2 cursor-pointer ${
+            color === selectedColor ? 'ring-2 ring-offset-2 ring-indigo-500' : 'border-white'
           }`}
           style={{ backgroundColor: color }}
           onClick={() => onColorSelect(color)}
+          title={`Цвет ${index + 1}`}
         ></div>
       ))}
     </div>
