@@ -1,3 +1,4 @@
+// pages/dashboard/forecasting.tsx (обновленный)
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/Layout/DashboardLayout';
 import { themeColors } from '@/lib/Theme/Colors';
@@ -5,10 +6,9 @@ import { ForecastOptions, ForecastResult, TimeSeriesPoint } from '@/lib/Forecast
 import { ParsedData } from '@/lib/Data/csvParser';
 import { useData } from '@/Context/DataContext';
 
-
-// Импорт новых компонентов для вкладок
+// Импорт обновленных компонентов
 import CreateForecastTab from '@/components/Forecasting/CreateForecast';
-import ForecastResultsTab from '@/components/Forecasting/ForecastResults';
+import ForecastResultsWithExport from '@/components/Forecasting/ForecastResultWithExport';
 import ForecastSettingsTab from '@/components/Forecasting/ForecastSettings';
 
 // Интерфейс для истории прогнозов
@@ -151,9 +151,9 @@ const ForecastingPage: React.FC = () => {
         />
       )}
   
-      {/* Вкладка результатов прогнозов */}
+      {/* Вкладка результатов прогнозов с экспортом */}
       {activeTab === 'results' && (
-        <ForecastResultsTab 
+        <ForecastResultsWithExport 
           currentForecast={currentForecast}
           forecastHistory={forecastHistory}
           setCurrentForecast={setCurrentForecast}

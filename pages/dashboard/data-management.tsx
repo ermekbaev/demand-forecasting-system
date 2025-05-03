@@ -1,10 +1,10 @@
-// pages/dashboard/data-management.tsx
+// pages/dashboard/data-management.tsx (обновленный)
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/Layout/DashboardLayout';
 import TabsNavigation from '@/components/DataManagement/TabsNavigation';
 import UploadTab from '@/components/DataManagement/UploadTab';
 import ViewTab from '@/components/DataManagement/ViewTab';
-import ExportTab from '@/components/DataManagement/ExportTab';
+import ExportTabWithTemplates from '@/components/DataManagement/ExportTabWidthTemplates'; // Обновленный импорт
 import { parseCSV, readFileAsText, processTimeSeriesData, ParsedData, ParsedDataRow } from '@/lib/Data/csvParser';
 import { validateData, ValidationResult } from '@/lib/Data/dataValidator';
 import { useData } from '@/Context/DataContext';
@@ -218,7 +218,7 @@ const DataManagementPage: React.FC = () => {
       )}
 
       {activeTab === 'export' && parsedData && (
-        <ExportTab 
+        <ExportTabWithTemplates 
           parsedData={parsedData}
           filteredData={filteredData}
         />
