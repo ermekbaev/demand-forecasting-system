@@ -1,24 +1,55 @@
-// components/DataManagement/ExportTab.tsx
-import React, { useState } from 'react';
+// components/DataManagement/ExportTabWithTemplates.tsx
+import React, { useState, useEffect } from 'react';
 import { themeColors } from '@/lib/Theme/Colors';
 import { ParsedData, ParsedDataRow } from '@/lib/Data/csvParser';
-import { exportToCSV, exportToJSON, exportToXLSX, downloadData } from '@/lib/Data/dataExporter';
+import { exportToCSV, exportToJSON, exportToXLSX, downloadData, ExportOptions } from '@/lib/Data/dataExporter';
 import SettingsButton from '@/components/Settings/SettingsButton';
 import { useSettings } from '@/Context/SettingsContext';
+import { ExportTemplate, getExportTemplates, getDefaultExportTemplate } from '@/lib/Data/exportTempletes';
+import ExportTemplateManager from '@/components/DataExport/ExportTemplateManager';
 
-interface ExportTabProps {
+interface ExportTabWithTemplatesProps {
   parsedData: ParsedData;
   filteredData: ParsedDataRow[];
 }
 
-const ExportTab: React.FC<ExportTabProps> = ({ parsedData, filteredData }) => {
+const ExportTabWithTemplates: React.FC<ExportTabWithTemplatesProps> = ({ parsedData, filteredData }) => {
   const [dataSelection, setDataSelection] = useState<'all' | 'filtered'>('all');
   const [fileFormat, setFileFormat] = useState<'csv' | 'xlsx' | 'json'>('csv');
   const [includeHeaders, setIncludeHeaders] = useState<boolean>(true);
   const [includeSummary, setIncludeSummary] = useState<boolean>(false);
   const [selectedFields, setSelectedFields] = useState<string[]>(parsedData.fields);
   const [exportSuccess, setExportSuccess] = useState<boolean>(false);
+  const [templates, setTemplates] = useState<ExportTemplate[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<ExportTemplate | null>(null);
+  const [showTemplateManager, setShowTemplateManager] = useState<boolean>(false);
   const { generalSettings } = useSettings();
+
+  // Загрузка шаблонов и настройка шаблона по умолчанию
+  useEffect(() => {
+    const loadedTemplates = getExportTemplates();
+    setTemplates(loadedTemplates);
+    
+    // Проверяем наличие шаблона по умолчанию
+    const defaultTemplate = getDefaultExportTemplate();
+    if (defaultTemplate) {
+      setSelectedTemplate(defaultTemplate);
+      applyTemplate(defaultTemplate);
+    }
+  }, []);
+  
+  // Применение шаблона к текущим настройкам
+  const applyTemplate = (template: ExportTemplate) => {
+    setFileFormat(template.format as 'csv' | 'xlsx' | 'json'); // Приведение типа для совместимости
+    setIncludeHeaders(template.options.includeHeaders);
+    setIncludeSummary(template.options.includeSummary);
+    
+    // Проверяем, что выбранные поля существуют в текущих данных
+    const validFields = template.selectedFields.filter((field:any) => 
+      parsedData.fields.includes(field)
+    );
+    setSelectedFields(validFields.length > 0 ? validFields : parsedData.fields);
+  };
 
   // Обработка выбора полей для экспорта
   const handleFieldToggle = (field: string) => {
@@ -37,6 +68,13 @@ const ExportTab: React.FC<ExportTabProps> = ({ parsedData, filteredData }) => {
   // Снятие выбора со всех полей
   const handleUnselectAllFields = () => {
     setSelectedFields([]);
+  };
+
+  // Обработчик выбора шаблона
+  const handleSelectTemplate = (template: ExportTemplate) => {
+    setSelectedTemplate(template);
+    applyTemplate(template);
+    setShowTemplateManager(false);
   };
 
   const handleExport = () => {
@@ -112,6 +150,8 @@ const ExportTab: React.FC<ExportTabProps> = ({ parsedData, filteredData }) => {
         return exportToJSON(dataToExport, selectedFields, options).slice(0, 1000);
       case 'xlsx':
         return 'Предпросмотр для XLSX недоступен';
+      default:
+        return '';
     }
   };
 
@@ -126,6 +166,30 @@ const ExportTab: React.FC<ExportTabProps> = ({ parsedData, filteredData }) => {
           Экспорт данных успешно выполнен!
         </div>
       )}
+      
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-sm font-medium" style={{ color: themeColors.darkTeal }}>
+          Параметры экспорта
+        </h3>
+        
+        <div className="flex space-x-2">
+          {selectedTemplate && (
+            <div className="flex items-center">
+              <span className="text-sm text-gray-600 mr-2">
+                Шаблон: <span className="font-medium">{selectedTemplate.name}</span>
+              </span>
+            </div>
+          )}
+          
+          <button 
+            className="text-sm text-white px-3 py-1 rounded"
+            style={{ backgroundColor: themeColors.bluishGray }}
+            onClick={() => setShowTemplateManager(true)}
+          >
+            {templates.length > 0 ? 'Шаблоны' : 'Создать шаблон'}
+          </button>
+        </div>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -255,20 +319,22 @@ const ExportTab: React.FC<ExportTabProps> = ({ parsedData, filteredData }) => {
               </div>
             </div>
             <div className="max-h-60 overflow-y-auto border border-gray-200 rounded p-2 bg-white">
-              {parsedData.fields.map(field => (
-                <div key={field} className="flex items-center py-1">
-                  <input
-                    id={`field-${field}`}
-                    type="checkbox"
-                    checked={selectedFields.includes(field)}
-                    onChange={() => handleFieldToggle(field)}
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor={`field-${field}`} className="ml-3 block text-sm font-medium text-gray-700">
-                    {field}
-                  </label>
-                </div>
-              ))}
+              <div className="grid grid-cols-2 gap-1">
+                {parsedData.fields.map(field => (
+                  <div key={field} className="flex items-center py-1">
+                    <input
+                      id={`field-${field}`}
+                      type="checkbox"
+                      checked={selectedFields.includes(field)}
+                      onChange={() => handleFieldToggle(field)}
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor={`field-${field}`} className="ml-3 block text-sm font-medium text-gray-700 truncate">
+                      {field}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -296,9 +362,17 @@ const ExportTab: React.FC<ExportTabProps> = ({ parsedData, filteredData }) => {
           Экспортировать данные
         </SettingsButton>
       </div>
+      
+      {/* Менеджер шаблонов */}
+      {showTemplateManager && (
+        <ExportTemplateManager
+          fields={parsedData.fields}
+          onSelectTemplate={handleSelectTemplate}
+          onCloseManager={() => setShowTemplateManager(false)}
+        />
+      )}
     </div>
   );
 };
 
-export default ExportTab;
-
+export default ExportTabWithTemplates;
