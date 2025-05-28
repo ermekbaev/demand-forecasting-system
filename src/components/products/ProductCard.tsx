@@ -6,18 +6,19 @@ import { Button } from '../ui/Button';
 
 // Типы для продукта
 interface Product {
-  id: string;
+  slug: string;
   Name: string;
-  brand: string;
+  brandName: string;
   Price: number;
   originalPrice?: number;
   imageUrl: string;
-  category: string;
+  categoryName?: string;
   rating?: number;
   isNew?: boolean;
   isSale?: boolean;
   colors?: string[];
-  sizes?: string[];
+  sizes?: (string | number)[];
+  genders?: string[]
 }
 
 interface ProductCardProps {
@@ -100,8 +101,8 @@ export function ProductCard({
 
   // Расчет скидки
   const getDiscountPercent = () => {
-    if (!product.originalPrice || product.originalPrice <= product.price) return 0;
-    return Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+    if (!product.originalPrice || product.originalPrice <= product.Price) return 0;
+    return Math.round(((product.originalPrice - product.Price) / product.originalPrice) * 100);
   };
 
   // Обработчики
@@ -239,8 +240,19 @@ export function ProductCard({
           src={product.imageUrl}
           alt={product.Name}
           style={imageStyle}
-          onLoad={() => setImageLoading(false)}
-          onError={() => setImageLoading(false)}
+          onLoad={() => {
+            console.log('✅ Изображение загружено:', product.imageUrl);
+            setImageLoading(false);
+          }}
+          onError={(e) => {
+            console.error('❌ Ошибка загрузки изображения:', {
+              url: product.imageUrl,
+              error: e
+            });
+            setImageLoading(false);
+            // Устанавливаем fallback изображение
+            e.currentTarget.src = 'https://placehold.co/300x240/e5e7eb/9ca3af?text=Нет+фото';
+          }}
         />
 
         {/* Бейджи */}
@@ -323,7 +335,7 @@ export function ProductCard({
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
           }}>
-            {product.brand}
+            {product.brandName}
           </span>
           
           {product.rating && (
@@ -357,7 +369,7 @@ export function ProductCard({
           color: '#9ca3af',
           marginBottom: '12px',
         }}>
-          {product.category}
+          {product.categoryName}
         </p>
 
         {/* Цвета и размеры */}

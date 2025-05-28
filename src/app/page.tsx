@@ -5,6 +5,10 @@ import { ProductCard } from '../components/products/ProductCard';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 
+import { DataDebugger } from '@/components/debug/DataDebugger';
+
+
+
 // Типы на основе реальных данных API
 interface Product {
   slug: string;
@@ -519,7 +523,25 @@ console.log(products, "==================PRODUCTS=====================");
               gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
               gap: '32px',
             }}>
-              {products.map((product) => (
+              {products.map((product, index) => (
+                <div key={product.slug} style={{ position: 'relative' }}>
+                    {index === 0 && (
+                      <DataDebugger 
+                        data={{
+                          received: product,
+                          expected: {
+                            slug: "есть",
+                            Name: "есть", 
+                            brandName: product.brandName ? "✅" : "❌ отсутствует",
+                            categoryName: product.categoryName ? "✅" : "❌ отсутствует",
+                            imageUrl: product.imageUrl ? "✅" : "❌ отсутствует",
+                            colors: product.colors?.length ? `✅ (${product.colors.length})` : "❌ отсутствует",
+                            sizes: product.sizes?.length ? `✅ (${product.sizes.length})` : "❌ отсутствует"
+                          }
+                        }}
+                        title="Отладка ProductCard"
+                      />
+                    )}
                 <ProductCard
                   key={product.slug}
                   product={{
@@ -538,6 +560,7 @@ console.log(products, "==================PRODUCTS=====================");
                   onToggleFavorite={(product:any) => handleProductAction('toggle-favorite', product)}
                   onQuickView={(product:any) => handleProductAction('quick-view', product)}
                 />
+                </div>
               ))}
             </div>
           </section>
