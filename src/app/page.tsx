@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { ProductCard } from '../components/products/ProductCard';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+// В src/app/page.tsx в самом начале после других импортов
+import { SearchBar } from '../components/search/SearchBar';
 
 // Типы на основе реальных данных API
 interface Product {
@@ -178,19 +180,10 @@ export default function HomePage() {
   };
 
   // Обработка поиска
-  const handleSearch = async () => {
+// Заменить старую функцию на эту:
+  const handleSearch = (searchQuery: string) => {
     if (!searchQuery.trim()) return;
-    
-    try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`);
-      if (response.ok) {
-        const data = await response.json();
-        // Перенаправляем на страницу результатов поиска
-        window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
-      }
-    } catch (error) {
-      console.error('Ошибка поиска:', error);
-    }
+    window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
   };
 
   if (loading) {
@@ -276,8 +269,9 @@ export default function HomePage() {
       <section className="hero-gradient" style={{
         position: 'relative',
         padding: '100px 20px 120px',
-        overflow: 'hidden',
+        overflow: 'visible',
         background: 'var(--gradient-hero)',
+        zIndex: 1,
       }}>
         {/* Декоративные элементы с анимацией */}
         <div className="animate-float" style={{
@@ -368,52 +362,18 @@ export default function HomePage() {
           </p>
 
           {/* Премиальный поиск */}
-          <div style={{
-            maxWidth: '600px',
-            margin: '0 auto 56px',
-            position: 'relative',
-          }}>
-            <div className="glass" style={{
+            <div style={{
+              maxWidth: '600px',
+              margin: '0 auto 56px',
               position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              borderRadius: '60px',
-              padding: '8px',
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1)',
             }}>
-              <input
-                type="text"
+              <SearchBar 
                 placeholder="Поиск премиальных товаров..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                style={{
-                  flex: 1,
-                  padding: '20px 32px',
-                  border: 'none',
-                  background: 'transparent',
-                  fontSize: '16px',
-                  color: '#ffffff',
-                  outline: 'none',
-                  fontWeight: '500',
-                }}
+                variant="hero"
+                onSearch={handleSearch}
+                showSuggestions={true}
               />
-              <Button
-                variant="gradient"
-                size="lg"
-                onClick={handleSearch}
-                style={{
-                  borderRadius: '50px',
-                  minWidth: '140px',
-                  background: 'var(--gradient-button)',
-                  boxShadow: 'var(--shadow-emerald)',
-                }}
-              >
-                <SearchIcon size={20} />
-                Найти
-              </Button>
             </div>
-          </div>
 
           {/* Кнопки действий */}
           <div style={{
