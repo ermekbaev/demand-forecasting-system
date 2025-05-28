@@ -1,18 +1,17 @@
 'use client';
 
 import React, { CSSProperties, MouseEvent } from 'react';
-import { useAppTheme } from '@/hooks/useTheme';
 
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'gradient';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'gradient' | 'premium';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   disabled?: boolean;
   loading?: boolean;
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => void; // ✅ Исправлена типизация
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   type?: 'button' | 'submit' | 'reset';
-  style?: CSSProperties; // ✅ Добавлено для передачи внешних стилей
+  style?: CSSProperties;
 }
 
 export function Button({
@@ -24,45 +23,61 @@ export function Button({
   onClick,
   className = '',
   type = 'button',
-  style = {}, // ✅ Добавлено значение по умолчанию
+  style = {},
 }: ButtonProps) {
-  const { colors, isDark } = useAppTheme();
 
-  const getVariantStyles = (): CSSProperties => { // ✅ Добавлена типизация возвращаемого значения
+  const getVariantStyles = (): CSSProperties => {
     switch (variant) {
       case 'primary':
         return {
-          backgroundColor: colors.tint,
+          background: 'var(--gradient-button)',
           color: '#ffffff',
           border: 'none',
+          boxShadow: 'var(--shadow-md)',
         };
       
       case 'gradient':
         return {
-          background: 'var(--gradient-primary)',
+          background: 'var(--gradient-button)',
           color: '#ffffff',
           border: 'none',
+          boxShadow: 'var(--shadow-emerald)',
+          position: 'relative',
+          overflow: 'hidden',
+        };
+      
+      case 'premium':
+        return {
+          background: 'var(--gradient-emerald)',
+          color: '#ffffff',
+          border: '1px solid var(--emerald-400)',
+          boxShadow: 'var(--shadow-emerald-lg)',
+          position: 'relative',
+          overflow: 'hidden',
         };
       
       case 'secondary':
         return {
-          backgroundColor: colors.card,
-          color: colors.text,
-          border: `1px solid ${colors.border}`,
+          backgroundColor: 'var(--color-card)',
+          color: 'var(--color-text)',
+          border: `1px solid var(--color-border)`,
+          boxShadow: 'var(--shadow-sm)',
         };
       
       case 'outline':
         return {
           backgroundColor: 'transparent',
-          color: colors.tint,
-          border: `1px solid ${colors.tint}`,
+          color: 'var(--emerald-600)',
+          border: `1px solid var(--emerald-500)`,
+          boxShadow: 'none',
         };
       
       case 'ghost':
         return {
           backgroundColor: 'transparent',
-          color: colors.text,
+          color: 'var(--color-text)',
           border: 'none',
+          boxShadow: 'none',
         };
       
       default:
@@ -70,69 +85,83 @@ export function Button({
     }
   };
 
-  const getSizeStyles = (): CSSProperties => { // ✅ Добавлена типизация
+  const getSizeStyles = (): CSSProperties => {
     switch (size) {
       case 'sm':
         return {
-          padding: '0.5rem 1rem',
-          fontSize: '0.875rem',
-          borderRadius: '0.375rem',
+          padding: '8px 16px',
+          fontSize: '13px',
+          borderRadius: '12px',
+          fontWeight: '600',
         };
       case 'lg':
         return {
-          padding: '0.875rem 2rem',
-          fontSize: '1.125rem',
-          borderRadius: '0.5rem',
+          padding: '16px 32px',
+          fontSize: '16px',
+          borderRadius: '16px',
+          fontWeight: '700',
+        };
+      case 'xl':
+        return {
+          padding: '20px 40px',
+          fontSize: '18px',
+          borderRadius: '20px',
+          fontWeight: '700',
         };
       default: // md
         return {
-          padding: '0.75rem 1.5rem',
-          fontSize: '1rem',
-          borderRadius: '0.5rem',
+          padding: '12px 24px',
+          fontSize: '14px',
+          borderRadius: '14px',
+          fontWeight: '600',
         };
     }
   };
 
-  // ✅ Убираем проблемные hover стили из объекта
   const baseStyles: CSSProperties = {
-    fontWeight: '600',
-    transition: 'all 0.2s ease',
-    cursor: disabled || loading ? 'not-allowed' : 'pointer',
-    opacity: disabled || loading ? 0.6 : 1,
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '0.5rem',
+    gap: '8px',
+    cursor: disabled || loading ? 'not-allowed' : 'pointer',
+    opacity: disabled || loading ? 0.6 : 1,
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    fontFamily: 'inherit',
+    letterSpacing: '0.01em',
+    whiteSpace: 'nowrap',
+    userSelect: 'none',
+    outline: 'none',
+    position: 'relative',
     ...getSizeStyles(),
     ...getVariantStyles(),
-    ...style, // ✅ Объединяем с внешними стилями
+    ...style,
   };
 
-  // ✅ Отдельные функции для hover эффектов
   const handleMouseEnter = (e: MouseEvent<HTMLButtonElement>) => {
     if (disabled || loading) return;
     
     switch (variant) {
       case 'primary':
-        e.currentTarget.style.backgroundColor = 'var(--green-600)';
-        e.currentTarget.style.transform = 'translateY(-1px)';
-        break;
       case 'gradient':
+      case 'premium':
         e.currentTarget.style.background = 'var(--gradient-button-hover)';
         e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = '0 8px 25px rgba(34, 197, 94, 0.3)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-emerald-lg)';
         break;
       case 'secondary':
-        e.currentTarget.style.backgroundColor = colors.cardBackground;
-        e.currentTarget.style.borderColor = colors.tint;
+        e.currentTarget.style.backgroundColor = 'var(--color-card-background)';
+        e.currentTarget.style.borderColor = 'var(--emerald-500)';
+        e.currentTarget.style.transform = 'translateY(-1px)';
         break;
       case 'outline':
-        e.currentTarget.style.backgroundColor = colors.tint;
+        e.currentTarget.style.backgroundColor = 'var(--emerald-500)';
         e.currentTarget.style.color = '#ffffff';
+        e.currentTarget.style.transform = 'translateY(-1px)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-emerald)';
         break;
       case 'ghost':
-        e.currentTarget.style.backgroundColor = colors.cardBackground;
-        e.currentTarget.style.color = colors.tint;
+        e.currentTarget.style.backgroundColor = 'var(--color-card-background)';
+        e.currentTarget.style.color = 'var(--emerald-600)';
         break;
     }
   };
@@ -143,25 +172,77 @@ export function Button({
     // Возвращаем исходные стили
     const originalStyles = { ...getSizeStyles(), ...getVariantStyles() };
     Object.assign(e.currentTarget.style, originalStyles);
+    e.currentTarget.style.transform = 'translateY(0)';
   };
+
+  const shimmerOverlay = (variant === 'gradient' || variant === 'premium') && (
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: '-100%',
+        width: '100%',
+        height: '100%',
+        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+        transition: 'left 0.6s ease',
+        pointerEvents: 'none',
+      }}
+      className="shimmer-overlay"
+    />
+  );
 
   return (
     <button
       type={type}
       disabled={disabled || loading}
       onClick={onClick}
-      className={`button-component ${className}`}
+      className={`premium-button ${className}`}
       style={baseStyles}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onMouseDown={(e) => {
+        if (disabled || loading) return;
+        e.currentTarget.style.transform = 'translateY(0) scale(0.98)';
+      }}
+      onMouseUp={(e) => {
+        if (disabled || loading) return;
+        e.currentTarget.style.transform = 'translateY(-2px) scale(1)';
+      }}
     >
+      {shimmerOverlay}
+      
       {loading && (
         <div 
-          className="animate-spin rounded-full h-4 w-4 border-2 border-t-transparent"
-          style={{ borderColor: 'currentColor transparent currentColor currentColor' }}
+          className="animate-spin rounded-full border-2 border-t-transparent"
+          style={{ 
+            width: size === 'sm' ? '14px' : size === 'lg' ? '18px' : '16px',
+            height: size === 'sm' ? '14px' : size === 'lg' ? '18px' : '16px',
+            borderColor: 'currentColor transparent currentColor currentColor',
+          }}
         />
       )}
-      {children}
+      
+      <span style={{ 
+        opacity: loading ? 0.7 : 1,
+        transition: 'opacity 0.2s ease',
+      }}>
+        {children}
+      </span>
+
+      <style jsx>{`
+        .premium-button:hover .shimmer-overlay {
+          left: 100%;
+        }
+        
+        .premium-button:focus-visible {
+          outline: 2px solid var(--emerald-500);
+          outline-offset: 2px;
+        }
+        
+        .premium-button:active {
+          transform: translateY(0) scale(0.98) !important;
+        }
+      `}</style>
     </button>
   );
 }
