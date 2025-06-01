@@ -4,10 +4,10 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { SearchBar } from '@/components/search/SearchBar';
 import { ProductCard } from '@/components/products/ProductCard';
+import { SearchFilters } from '@/components/search/SearchFilters';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { useAppTheme } from '@/hooks/useTheme';
-
 
 // Иконки
 const FilterIcon = ({ size = 20 }: { size?: number }) => (
@@ -63,6 +63,16 @@ interface Filters {
   maxPrice: number;
   sizes: string[];
   colors: string[];
+  genders: string[];
+}
+
+interface FilterOptions {
+  brands: Array<{ name: string; count: number }>;
+  categories: Array<{ name: string; count: number }>;
+  colors: Array<{ name: string; count: number }>;
+  sizes: Array<{ size: string; count: number }>;
+  genders: Array<{ name: string; count: number }>;
+  priceRange: { min: number; max: number };
 }
 
 const sortOptions = [
@@ -87,6 +97,7 @@ function SearchPageContent() {
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('relevance');
   
+  // ✅ Расширенные фильтры с гендером
   const [filters, setFilters] = useState<Filters>({
     brands: [],
     categories: [],
@@ -94,6 +105,50 @@ function SearchPageContent() {
     maxPrice: 50000,
     sizes: [],
     colors: [],
+    genders: [],
+  });
+
+  // ✅ Доступные опции для фильтров (можно загружать с API)
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    brands: [
+      { name: 'Nike', count: 156 },
+      { name: 'Adidas', count: 134 },
+      { name: 'New Balance', count: 89 },
+      { name: 'Converse', count: 67 },
+      { name: 'Vans', count: 45 },
+      { name: 'Puma', count: 38 },
+    ],
+    categories: [
+      { name: 'Кроссовки', count: 245 },
+      { name: 'Спортивная обувь', count: 189 },
+      { name: 'Lifestyle', count: 123 },
+      { name: 'Баскетбольные', count: 67 },
+      { name: 'Беговые', count: 98 },
+    ],
+    colors: [
+      { name: 'Черный', count: 89 },
+      { name: 'Белый', count: 76 },
+      { name: 'Красный', count: 45 },
+      { name: 'Серый', count: 67 },
+      { name: 'Синий', count: 54 },
+      { name: 'Зеленый', count: 32 },
+    ],
+    sizes: [
+      { size: '38', count: 23 },
+      { size: '39', count: 34 },
+      { size: '40', count: 45 },
+      { size: '41', count: 56 },
+      { size: '42', count: 67 },
+      { size: '43', count: 54 },
+      { size: '44', count: 43 },
+      { size: '45', count: 32 },
+    ],
+    genders: [
+      { name: 'Мужские', count: 234 },
+      { name: 'Женские', count: 189 },
+      { name: 'Унисекс', count: 67 },
+    ],
+    priceRange: { min: 500, max: 25000 }
   });
 
   // Получаем поисковый запрос из URL
@@ -115,7 +170,7 @@ function SearchPageContent() {
 
   // Выполняем поиск при изменении параметров
   useEffect(() => {
-    if (query || filters.brands.length > 0 || filters.categories.length > 0) {
+    if (query || hasActiveFilters()) {
       performSearch();
     }
   }, [query, filters, sortBy]);
@@ -132,6 +187,12 @@ function SearchPageContent() {
       if (filters.categories.length > 0) params.append('category', filters.categories[0]);
       if (filters.minPrice > 0) params.append('minPrice', filters.minPrice.toString());
       if (filters.maxPrice < 50000) params.append('maxPrice', filters.maxPrice.toString());
+      
+      // ✅ Добавляем новые параметры фильтров
+      if (filters.genders.length > 0) params.append('gender', filters.genders.join(','));
+      if (filters.sizes.length > 0) params.append('sizes', filters.sizes.join(','));
+      if (filters.colors.length > 0) params.append('colors', filters.colors.join(','));
+      
       params.append('sort', sortBy);
       params.append('limit', '24');
 
@@ -168,7 +229,8 @@ function SearchPageContent() {
     router.push(`/search?q=${encodeURIComponent(newQuery)}`);
   };
 
-  const clearFilters = () => {
+  // ✅ Обновленная функция очистки всех фильтров
+  const clearAllFilters = () => {
     setFilters({
       brands: [],
       categories: [],
@@ -176,32 +238,65 @@ function SearchPageContent() {
       maxPrice: 50000,
       sizes: [],
       colors: [],
+      genders: [],
     });
   };
 
+  // ✅ Удаление конкретного фильтра
   const removeFilter = (type: keyof Filters, value: string | number) => {
     setFilters(prev => ({
       ...prev,
       [type]: Array.isArray(prev[type]) 
         ? (prev[type] as any[]).filter(item => item !== value)
-        : prev[type]
+        : type === 'minPrice' ? 0 : type === 'maxPrice' ? 50000 : prev[type]
     }));
   };
 
+  // ✅ Проверка наличия активных фильтров
   const hasActiveFilters = () => {
     return filters.brands.length > 0 || 
            filters.categories.length > 0 || 
            filters.minPrice > 0 || 
            filters.maxPrice < 50000 ||
            filters.sizes.length > 0 ||
-           filters.colors.length > 0;
+           filters.colors.length > 0 ||
+           filters.genders.length > 0;
   };
 
   const handleProductAction = (action: string, product: Product) => {
     console.log(`${action}:`, product);
     // TODO: Реализовать действия с товарами
   };
-  
+
+  // ✅ Получение всех активных фильтров для отображения
+  const getActiveFilterTags = () => {
+    const tags: Array<{ type: keyof Filters; value: string | number; label: string }> = [];
+    
+    filters.brands.forEach(brand => 
+      tags.push({ type: 'brands', value: brand, label: `Бренд: ${brand}` })
+    );
+    filters.categories.forEach(category => 
+      tags.push({ type: 'categories', value: category, label: `Категория: ${category}` })
+    );
+    filters.genders.forEach(gender => 
+      tags.push({ type: 'genders', value: gender, label: `Пол: ${gender}` })
+    );
+    filters.colors.forEach(color => 
+      tags.push({ type: 'colors', value: color, label: `Цвет: ${color}` })
+    );
+    filters.sizes.forEach(size => 
+      tags.push({ type: 'sizes', value: size, label: `Размер: ${size}` })
+    );
+    
+    if (filters.minPrice > 0) {
+      tags.push({ type: 'minPrice', value: filters.minPrice, label: `От: ${filters.minPrice}₽` });
+    }
+    if (filters.maxPrice < 50000) {
+      tags.push({ type: 'maxPrice', value: filters.maxPrice, label: `До: ${filters.maxPrice}₽` });
+    }
+    
+    return tags;
+  };
 
   return (
     <div style={{ 
@@ -302,7 +397,7 @@ function SearchPageContent() {
               />
             </div>
 
-            {/* Фильтры */}
+            {/* Кнопка фильтров */}
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
@@ -327,7 +422,7 @@ function SearchPageContent() {
           </div>
         </div>
 
-        {/* Активные фильтры */}
+        {/* ✅ Активные фильтры - обновленная версия */}
         {hasActiveFilters() && (
           <div style={{
             display: 'flex',
@@ -344,9 +439,9 @@ function SearchPageContent() {
               Активные фильтры:
             </span>
             
-            {filters.brands.map(brand => (
+            {getActiveFilterTags().map((tag, index) => (
               <div
-                key={`brand-${brand}`}
+                key={`${tag.type}-${tag.value}-${index}`}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -359,46 +454,17 @@ function SearchPageContent() {
                   color: colors.text,
                 }}
               >
-                Бренд: {brand}
+                {tag.label}
                 <button
-                  onClick={() => removeFilter('brands', brand)}
+                  onClick={() => removeFilter(tag.type, tag.value)}
                   style={{
                     background: 'none',
                     border: 'none',
                     cursor: 'pointer',
                     color: colors.placeholder,
                     padding: '2px',
-                  }}
-                >
-                  <XIcon size={12} />
-                </button>
-              </div>
-            ))}
-            
-            {filters.categories.map(category => (
-              <div
-                key={`category-${category}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '6px 12px',
-                  background: colors.cardBackground,
-                  borderRadius: '20px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: colors.text,
-                }}
-              >
-                Категория: {category}
-                <button
-                  onClick={() => removeFilter('categories', category)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: colors.placeholder,
-                    padding: '2px',
+                    display: 'flex',
+                    alignItems: 'center',
                   }}
                 >
                   <XIcon size={12} />
@@ -409,7 +475,7 @@ function SearchPageContent() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={clearFilters}
+              onClick={clearAllFilters}
               style={{
                 color: colors.placeholder,
                 fontSize: '13px',
@@ -428,152 +494,15 @@ function SearchPageContent() {
           alignItems: 'start',
         }}>
           
-          {/* Панель фильтров */}
+          {/* ✅ Новая панель фильтров */}
           {showFilters && (
-            <Card variant="elevated" style={{ position: 'sticky', top: '100px' }}>
-              <div style={{
-                padding: '24px',
-              }}>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '24px',
-                }}>
-                  <h3 style={{
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    color: colors.text,
-                  }}>
-                    Фильтры
-                  </h3>
-                  <button
-                    onClick={() => setShowFilters(false)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: colors.placeholder,
-                      padding: '4px',
-                    }}
-                    className="lg:hidden"
-                  >
-                    <XIcon size={20} />
-                  </button>
-                </div>
-
-                {/* Ценовой диапазон */}
-                <div style={{ marginBottom: '24px' }}>
-                  <h4 style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: colors.text,
-                    marginBottom: '12px',
-                  }}>
-                    Цена
-                  </h4>
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '12px',
-                  }}>
-                    <input
-                      type="number"
-                      placeholder="От"
-                      value={filters.minPrice || ''}
-                      onChange={(e) => setFilters(prev => ({
-                        ...prev,
-                        minPrice: parseInt(e.target.value) || 0
-                      }))}
-                      style={{
-                        padding: '8px 12px',
-                        border: `1px solid ${colors.border}`,
-                        borderRadius: '8px',
-                        background: colors.searchBackground,
-                        color: colors.text,
-                        fontSize: '14px',
-                      }}
-                    />
-                    <input
-                      type="number"
-                      placeholder="До"
-                      value={filters.maxPrice === 50000 ? '' : filters.maxPrice}
-                      onChange={(e) => setFilters(prev => ({
-                        ...prev,
-                        maxPrice: parseInt(e.target.value) || 50000
-                      }))}
-                      style={{
-                        padding: '8px 12px',
-                        border: `1px solid ${colors.border}`,
-                        borderRadius: '8px',
-                        background: colors.searchBackground,
-                        color: colors.text,
-                        fontSize: '14px',
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {/* Быстрые фильтры */}
-                <div style={{ marginBottom: '24px' }}>
-                  <h4 style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: colors.text,
-                    marginBottom: '12px',
-                  }}>
-                    Популярные бренды
-                  </h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {['Nike', 'Adidas', 'New Balance', 'Converse'].map(brand => (
-                      <label
-                        key={brand}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          cursor: 'pointer',
-                          fontSize: '14px',
-                          color: colors.text,
-                        }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={filters.brands.includes(brand)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setFilters(prev => ({
-                                ...prev,
-                                brands: [...prev.brands, brand]
-                              }));
-                            } else {
-                              setFilters(prev => ({
-                                ...prev,
-                                brands: prev.brands.filter(b => b !== brand)
-                              }));
-                            }
-                          }}
-                          style={{ accentColor: colors.tint }}
-                        />
-                        {brand}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <Button
-                  variant="outline"
-                  onClick={clearFilters}
-                  style={{
-                    width: '100%',
-                    borderColor: colors.border,
-                    color: colors.text,
-                  }}
-                >
-                  Сбросить фильтры
-                </Button>
-              </div>
-            </Card>
+            <SearchFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              onClose={() => setShowFilters(false)}
+              showMobileClose={true}
+              availableOptions={filterOptions}
+            />
           )}
 
           {/* Результаты поиска */}
@@ -678,7 +607,7 @@ function SearchPageContent() {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={clearFilters}
+                    onClick={clearAllFilters}
                   >
                     Очистить фильтры
                   </Button>
@@ -688,22 +617,24 @@ function SearchPageContent() {
 
             {!loading && !error && products.length > 0 && (
               <>
+                {/* ✅ Оптимизированная сетка для поиска */}
                 <div 
-                  className="products-grid"
+                  className="search-results-grid"
                   style={{
                     display: 'grid',
                     gridTemplateColumns: showFilters 
-                      ? 'repeat(auto-fit, minmax(280px, 1fr))'
-                      : 'repeat(auto-fit, minmax(280px, 1fr))',
-                    gap: '24px',
-                    justifyItems: 'center',
+                      ? 'repeat(auto-fill, minmax(240px, 1fr))' 
+                      : 'repeat(auto-fill, minmax(260px, 1fr))',
+                    gap: '20px',
+                    justifyItems: 'stretch',
+                    alignItems: 'start',
                   }}
                 >
                   {products.map((product) => (
                     <ProductCard
                       key={product.slug}
                       product={product}
-                      size="standard"
+                      size="compact"
                       showQuickActions
                       onAddToCart={(product: any) => handleProductAction('add-to-cart', product)}
                       onToggleFavorite={(product: any) => handleProductAction('toggle-favorite', product)}
@@ -788,19 +719,55 @@ function SearchPageContent() {
         </div>
       </div>
 
+      {/* ✅ Адаптивные стили */}
       <style jsx>{`
-        @media (max-width: 768px) {
-          .products-grid {
+        .search-results-grid {
+          width: 100%;
+          margin: 0 auto;
+        }
+
+        /* Мобильные устройства */
+        @media (max-width: 640px) {
+          .search-results-grid {
             grid-template-columns: 1fr !important;
             gap: 16px !important;
+            padding: 0 8px;
           }
         }
 
-        @media (min-width: 769px) and (max-width: 1024px) {
-          .products-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 20px !important;
+        /* Планшеты */
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .search-results-grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+            gap: 18px !important;
           }
+        }
+
+        /* Средние экраны */
+        @media (min-width: 1025px) and (max-width: 1400px) {
+          .search-results-grid {
+            grid-template-columns: ${showFilters 
+              ? 'repeat(auto-fill, minmax(220px, 1fr))' 
+              : 'repeat(auto-fill, minmax(240px, 1fr))'
+            } !important;
+          }
+        }
+
+        /* Большие экраны */
+        @media (min-width: 1401px) {
+          .search-results-grid {
+            grid-template-columns: ${showFilters 
+              ? 'repeat(auto-fill, minmax(240px, 1fr))' 
+              : 'repeat(auto-fill, minmax(260px, 1fr))'
+            } !important;
+          }
+        }
+
+        /* Ограничиваем максимальную ширину карточек */
+        .search-results-grid > * {
+          max-width: 320px;
+          width: 100%;
+          margin: 0 auto;
         }
       `}</style>
     </div>
