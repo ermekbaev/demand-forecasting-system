@@ -2,23 +2,50 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ProductCard as BaseProductCard } from '@/components/ui/Card'
+import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Badge, NotificationBadge } from '@/components/ui/Badge'
-import { Icon } from '@/components/ui/Icon'
+import { Badge } from '@/components/ui/Badge'
 import { cn, formatPrice } from '@/lib/utils'
+
+// Иконки
+const HeartIcon = ({ size = 16, className, filled = false }: { size?: number; className?: string; filled?: boolean }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" className={className}>
+    <path d="20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+  </svg>
+);
+
+const EyeIcon = ({ size = 16, className }: { size?: number; className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>
+);
+
+const StarIcon = ({ size = 16, className, filled = false }: { size?: number; className?: string; filled?: boolean }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" className={className}>
+    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+  </svg>
+);
+
+const ShoppingBagIcon = ({ size = 16, className }: { size?: number; className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+    <line x1="3" y1="6" x2="21" y2="6"/>
+    <path d="m16 10a4 4 0 0 1-8 0"/>
+  </svg>
+);
 
 interface Product {
   slug: string
-  name: string
-  brand: string
-  price: number
+  Name: string
+  brandName: string
+  Price: number
   originalPrice?: number
-  image: string
-  images?: string[]
+  imageUrl: string
+  imageUrls?: string[]
   colors?: string[]
-  sizes?: string[]
-  category?: string
+  sizes?: (string | number)[]
+  categoryName?: string
   rating?: number
   reviewCount?: number
   isNew?: boolean
@@ -31,7 +58,7 @@ interface Product {
 
 interface ProductCardProps {
   product: Product
-  variant?: 'default' | 'compact' | 'detailed'
+  size?: 'compact' | 'standard' | 'large'
   showQuickActions?: boolean
   showColorOptions?: boolean
   showSizeOptions?: boolean
@@ -44,7 +71,7 @@ interface ProductCardProps {
 
 export function ProductCard({
   product,
-  variant = 'default',
+  size = 'standard',
   showQuickActions = true,
   showColorOptions = false,
   showSizeOptions = false,
@@ -60,11 +87,11 @@ export function ProductCard({
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0])
   const [isAddingToCart, setIsAddingToCart] = useState(false)
 
-  const images = product.images || [product.image]
-  const currentImage = images[currentImageIndex] || product.image
+  const images = product.imageUrls || [product.imageUrl]
+  const currentImage = images[currentImageIndex] || product.imageUrl
   
   const discountPercent = product.originalPrice 
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    ? Math.round(((product.originalPrice - product.Price) / product.originalPrice) * 100)
     : product.discount
 
   const handleAddToCart = async () => {
@@ -86,88 +113,93 @@ export function ProductCard({
     onQuickView?.(product)
   }
 
-  const aspectRatio = variant === 'compact' ? 'square' : 'portrait'
+  // Размеры карточки
+  const cardSizes = {
+    compact: 'w-full max-w-[240px]',
+    standard: 'w-full max-w-[280px]',
+    large: 'w-full max-w-[320px]'
+  }
+
+  const imageSizes = {
+    compact: 'aspect-square',
+    standard: 'aspect-[4/5]',
+    large: 'aspect-[3/4]'
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={className}
+      className={cn(cardSizes[size], className)}
     >
-      <BaseProductCard
+      <Card
         variant="elevated"
-        aspectRatio={aspectRatio}
+        padding="none"
         hover
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="group h-full"
-        imageSlot={
-          <div className="relative w-full h-full">
-            {/* Main Image */}
-            <Image
-              src={currentImage}
-              alt={product.name}
-              fill
-              className={cn(
-                "object-cover transition-transform duration-700",
-                isHovered && "scale-110"
-              )}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-            
-            {/* Image Navigation */}
-            {images.length > 1 && (
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
-                {images.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={cn(
-                      "w-2 h-2 rounded-full transition-all duration-200",
-                      index === currentImageIndex 
-                        ? "bg-white scale-125" 
-                        : "bg-white/60 hover:bg-white/80"
-                    )}
-                  />
-                ))}
-              </div>
+        className="group h-full overflow-hidden relative"
+      >
+        {/* Image Container */}
+        <div className={cn('relative overflow-hidden bg-muted', imageSizes[size])}>
+          <Image
+            src={currentImage}
+            alt={product.Name}
+            fill
+            className={cn(
+              "object-cover transition-transform duration-700",
+              isHovered && "scale-110"
             )}
-            
-            {/* Hover Overlay */}
-            <div className={cn(
-              "absolute inset-0 bg-black/20 transition-opacity duration-300",
-              isHovered ? "opacity-100" : "opacity-0"
-            )} />
-          </div>
-        }
-        badgeSlot={
-          <div className="flex flex-col gap-2">
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+          
+          {/* Image Navigation Dots */}
+          {images.length > 1 && (
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
+              {images.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={cn(
+                    "w-2 h-2 rounded-full transition-all duration-200",
+                    index === currentImageIndex 
+                      ? "bg-white scale-125" 
+                      : "bg-white/60 hover:bg-white/80"
+                  )}
+                />
+              ))}
+            </div>
+          )}
+          
+          {/* Badges */}
+          <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
             {product.isNew && (
-              <Badge variant="premium" size="sm" icon="sparkles">
+              <Badge variant="premium" size="sm" className="bg-emerald-500 text-white">
                 Новинка
               </Badge>
             )}
             {product.isSale && discountPercent && (
-              <Badge variant="error" size="sm">
+              //@ts-ignore
+              <Badge variant="destructive" size="sm">
                 -{discountPercent}%
               </Badge>
             )}
             {product.isLimited && (
-              <Badge variant="gradient" size="sm" icon="zap">
+              <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white" size="sm">
                 Limited
               </Badge>
             )}
-            {!product.inStock && (
-              <Badge variant="outline" size="sm">
+            {product.inStock === false && (
+              <Badge variant="secondary" size="sm">
                 Нет в наличии
               </Badge>
             )}
           </div>
-        }
-        actionSlot={
-          showQuickActions && (
-            <div className="flex flex-col gap-2">
+          
+          {/* Quick Actions */}
+          {showQuickActions && (
+            <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               {/* Favorite Button */}
               <Button
                 size="icon-sm"
@@ -177,14 +209,10 @@ export function ProductCard({
                   "rounded-full shadow-lg backdrop-blur-sm",
                   isFavorite 
                     ? "bg-red-500 hover:bg-red-600 text-white" 
-                    : "bg-white/90 hover:bg-white text-neutral-700"
+                    : "bg-white/90 hover:bg-white text-foreground"
                 )}
               >
-                <Icon 
-                  name="heart" 
-                  size="sm" 
-                  className={isFavorite ? "fill-current" : ""} 
-                />
+                <HeartIcon size={14} filled={isFavorite} />
               </Button>
               
               {/* Quick View Button */}
@@ -192,24 +220,30 @@ export function ProductCard({
                 size="icon-sm"
                 variant="secondary"
                 onClick={handleQuickView}
-                className="rounded-full shadow-lg bg-white/90 hover:bg-white text-neutral-700 backdrop-blur-sm"
+                className="rounded-full shadow-lg bg-white/90 hover:bg-white text-foreground backdrop-blur-sm"
               >
-                <Icon name="eye" size="sm" />
+                <EyeIcon size={14} />
               </Button>
             </div>
-          )
-        }
-      >
+          )}
+          
+          {/* Hover Overlay */}
+          <div className={cn(
+            "absolute inset-0 bg-black/20 transition-opacity duration-300",
+            isHovered ? "opacity-100" : "opacity-0"
+          )} />
+        </div>
+
         {/* Product Info */}
-        <div className="space-y-3">
+        <div className="p-4 space-y-3">
           {/* Brand and Category */}
           <div className="flex items-center justify-between">
-            <Badge variant="outline" size="sm">
-              {product.brand}
+            <Badge variant="outline" size="sm" className="text-xs">
+              {product.brandName}
             </Badge>
-            {product.category && (
-              <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                {product.category}
+            {product.categoryName && (
+              <span className="text-xs text-muted-foreground">
+                {product.categoryName}
               </span>
             )}
           </div>
@@ -217,10 +251,10 @@ export function ProductCard({
           {/* Product Name */}
           <Link 
             href={`/products/${product.slug}`}
-            className="block"
+            className="block group-link"
           >
-            <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 line-clamp-2 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-              {product.name}
+            <h3 className="font-semibold text-foreground line-clamp-2 hover:text-primary transition-colors leading-tight">
+              {product.Name}
             </h3>
           </Link>
           
@@ -229,23 +263,23 @@ export function ProductCard({
             <div className="flex items-center gap-1">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
-                  <Icon
+                  <StarIcon
                     key={i}
-                    name="star"
-                    size="xs"
+                    size={12}
+                    filled={i < Math.floor(product.rating!)}
                     className={cn(
                       i < Math.floor(product.rating!)
-                        ? "text-amber-400 fill-current"
-                        : "text-neutral-300 dark:text-neutral-600"
+                        ? "text-amber-400"
+                        : "text-muted-foreground"
                     )}
                   />
                 ))}
               </div>
-              <span className="text-sm text-neutral-600 dark:text-neutral-400">
+              <span className="text-sm text-muted-foreground">
                 {product.rating.toFixed(1)}
               </span>
               {product.reviewCount && (
-                <span className="text-xs text-neutral-500 dark:text-neutral-500">
+                <span className="text-xs text-muted-foreground">
                   ({product.reviewCount})
                 </span>
               )}
@@ -255,7 +289,7 @@ export function ProductCard({
           {/* Colors */}
           {showColorOptions && product.colors && product.colors.length > 0 && (
             <div>
-              <p className="text-xs text-neutral-600 dark:text-neutral-400 mb-1">
+              <p className="text-xs text-muted-foreground mb-2">
                 Цвета:
               </p>
               <div className="flex gap-1">
@@ -266,15 +300,15 @@ export function ProductCard({
                     className={cn(
                       "w-6 h-6 rounded-full border-2 transition-all",
                       selectedColor === color 
-                        ? "border-primary-500 scale-110" 
-                        : "border-neutral-200 hover:border-neutral-300"
+                        ? "border-primary scale-110" 
+                        : "border-border hover:border-muted-foreground"
                     )}
                     style={{ backgroundColor: color.toLowerCase() }}
                     title={color}
                   />
                 ))}
                 {product.colors.length > 4 && (
-                  <span className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center">
+                  <span className="text-xs text-muted-foreground flex items-center">
                     +{product.colors.length - 4}
                   </span>
                 )}
@@ -285,7 +319,7 @@ export function ProductCard({
           {/* Sizes */}
           {showSizeOptions && product.sizes && product.sizes.length > 0 && (
             <div>
-              <p className="text-xs text-neutral-600 dark:text-neutral-400 mb-1">
+              <p className="text-xs text-muted-foreground mb-2">
                 Размеры:
               </p>
               <div className="flex gap-1 flex-wrap">
@@ -301,7 +335,7 @@ export function ProductCard({
                   </Button>
                 ))}
                 {product.sizes.length > 6 && (
-                  <span className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center">
+                  <span className="text-xs text-muted-foreground flex items-center">
                     +{product.sizes.length - 6}
                   </span>
                 )}
@@ -313,11 +347,11 @@ export function ProductCard({
           <div className="flex items-center justify-between pt-2">
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
-                  {formatPrice(product.price)}
+                <span className="text-lg font-bold text-foreground">
+                  {formatPrice(product.Price)}
                 </span>
                 {product.originalPrice && (
-                  <span className="text-sm text-neutral-500 line-through">
+                  <span className="text-sm text-muted-foreground line-through">
                     {formatPrice(product.originalPrice)}
                   </span>
                 )}
@@ -328,15 +362,15 @@ export function ProductCard({
               size="sm"
               onClick={handleAddToCart}
               loading={isAddingToCart}
-              disabled={!product.inStock}
+              disabled={product.inStock === false}
               className="min-w-[100px]"
-              leftIcon={<Icon name="shopping-bag" size="xs" />}
+              leftIcon={<ShoppingBagIcon size={12} />}
             >
-              {!product.inStock ? 'Нет в наличии' : 'В корзину'}
+              {product.inStock === false ? 'Нет в наличии' : 'В корзину'}
             </Button>
           </div>
         </div>
-      </BaseProductCard>
+      </Card>
     </motion.div>
   )
 }

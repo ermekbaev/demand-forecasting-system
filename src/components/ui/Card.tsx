@@ -7,12 +7,12 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-lg',
-        elevated: 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-xl hover:shadow-2xl hover:-translate-y-1',
-        outlined: 'bg-transparent border-2 border-neutral-200 dark:border-neutral-700',
+        default: 'bg-card border border-border shadow-lg',
+        elevated: 'bg-card border border-border shadow-xl hover:shadow-2xl hover:-translate-y-1',
+        outlined: 'bg-transparent border-2 border-border',
         ghost: 'bg-transparent',
-        premium: 'bg-gradient-card dark:bg-gradient-dark-card border border-neutral-200 dark:border-neutral-700 shadow-premium hover:shadow-xl hover:-translate-y-1',
-        glass: 'glass dark:glass-dark shadow-glass',
+        premium: 'bg-gradient-to-br from-card to-muted/50 border border-border shadow-xl hover:shadow-2xl hover:-translate-y-1',
+        glass: 'backdrop-blur-lg bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10 shadow-xl',
       },
       padding: {
         none: '',
@@ -73,7 +73,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-xl font-bold leading-none tracking-tight text-neutral-900 dark:text-neutral-100",
+      "text-xl font-bold leading-none tracking-tight text-card-foreground",
       className
     )}
     {...props}
@@ -89,7 +89,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-neutral-500 dark:text-neutral-400", className)}
+    className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))
@@ -113,7 +113,7 @@ const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex items-center pt-6 mt-6 border-t border-neutral-200 dark:border-neutral-700", className)}
+    className={cn("flex items-center pt-6 mt-6 border-t border-border", className)}
     {...props}
   />
 ))
@@ -158,7 +158,7 @@ const ProductCard = React.forwardRef<
     >
       {/* Image Container */}
       {imageSlot && (
-        <div className={cn('relative overflow-hidden bg-neutral-100 dark:bg-neutral-800', aspectClasses[aspectRatio])}>
+        <div className={cn('relative overflow-hidden bg-muted', aspectClasses[aspectRatio])}>
           {imageSlot}
           
           {/* Badge Overlay */}
