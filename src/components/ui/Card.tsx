@@ -1,192 +1,201 @@
-'use client';
+import React from 'react'
+import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
 
-import React, { CSSProperties, MouseEvent } from 'react';
-import { useAppTheme } from '@/hooks/useTheme';
+const cardVariants = cva(
+  'rounded-2xl transition-all duration-300',
+  {
+    variants: {
+      variant: {
+        default: 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-lg',
+        elevated: 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-xl hover:shadow-2xl hover:-translate-y-1',
+        outlined: 'bg-transparent border-2 border-neutral-200 dark:border-neutral-700',
+        ghost: 'bg-transparent',
+        premium: 'bg-gradient-card dark:bg-gradient-dark-card border border-neutral-200 dark:border-neutral-700 shadow-premium hover:shadow-xl hover:-translate-y-1',
+        glass: 'glass dark:glass-dark shadow-glass',
+      },
+      padding: {
+        none: '',
+        sm: 'p-4',
+        default: 'p-6',
+        lg: 'p-8',
+        xl: 'p-10',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      padding: 'default',
+    },
+  }
+)
 
-interface CardProps {
-  children: React.ReactNode;
-  variant?: 'default' | 'elevated' | 'bordered' | 'gradient';
-  hover?: boolean;
-  className?: string;
-  onClick?: (event: MouseEvent<HTMLDivElement>) => void; // ✅ Исправлена типизация
-  padding?: 'none' | 'sm' | 'md' | 'lg';
-  style?: CSSProperties; // ✅ Добавлено для внешних стилей
+export interface CardProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof cardVariants> {
+  hover?: boolean
 }
 
-export function Card({
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant, padding, hover = false, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          cardVariants({ variant, padding }),
+          hover && 'hover:shadow-xl hover:-translate-y-1 cursor-pointer',
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    )
+  }
+)
+Card.displayName = "Card"
+
+const CardHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex flex-col space-y-1.5 mb-6", className)}
+    {...props}
+  />
+))
+CardHeader.displayName = "CardHeader"
+
+const CardTitle = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLHeadingElement>
+>(({ className, children, ...props }, ref) => (
+  <h3
+    ref={ref}
+    className={cn(
+      "text-xl font-bold leading-none tracking-tight text-neutral-900 dark:text-neutral-100",
+      className
+    )}
+    {...props}
+  >
+    {children}
+  </h3>
+))
+CardTitle.displayName = "CardTitle"
+
+const CardDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <p
+    ref={ref}
+    className={cn("text-sm text-neutral-500 dark:text-neutral-400", className)}
+    {...props}
+  />
+))
+CardDescription.displayName = "CardDescription"
+
+const CardContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("", className)}
+    {...props}
+  />
+))
+CardContent.displayName = "CardContent"
+
+const CardFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center pt-6 mt-6 border-t border-neutral-200 dark:border-neutral-700", className)}
+    {...props}
+  />
+))
+CardFooter.displayName = "CardFooter"
+
+// Специальный компонент для карточек товаров
+const ProductCard = React.forwardRef<
+  HTMLDivElement,
+  CardProps & {
+    aspectRatio?: 'square' | 'portrait' | 'landscape'
+    imageSlot?: React.ReactNode
+    badgeSlot?: React.ReactNode
+    actionSlot?: React.ReactNode
+  }
+>(({ 
+  className, 
+  variant = 'elevated', 
+  padding = 'none',
+  aspectRatio = 'portrait',
+  imageSlot,
+  badgeSlot,
+  actionSlot,
   children,
-  variant = 'default',
-  hover = false,
-  className = '',
-  onClick,
-  padding = 'md',
-  style = {}, // ✅ Добавлено значение по умолчанию
-}: CardProps) {
-  const { colors, isDark } = useAppTheme();
-
-  const getPaddingStyles = (): CSSProperties => { // ✅ Добавлена типизация
-    switch (padding) {
-      case 'none':
-        return { padding: '0' };
-      case 'sm':
-        return { padding: '0.75rem' };
-      case 'lg':
-        return { padding: '2rem' };
-      default: // md
-        return { padding: '1.5rem' };
-    }
-  };
-
-  const getVariantStyles = (): CSSProperties => { // ✅ Исправлена типизация
-    const baseStyles: CSSProperties = {
-      borderRadius: '0.75rem',
-      transition: 'all 0.3s ease',
-      cursor: onClick ? 'pointer' : 'default',
-      ...getPaddingStyles(),
-    };
-
-    switch (variant) {
-      case 'elevated':
-        return {
-          ...baseStyles,
-          backgroundColor: colors.card,
-          boxShadow: isDark 
-            ? '0 4px 12px rgba(0, 0, 0, 0.3)' 
-            : '0 4px 12px rgba(0, 0, 0, 0.1)',
-          border: `1px solid ${colors.border}`,
-        };
-      
-      case 'bordered':
-        return {
-          ...baseStyles,
-          backgroundColor: colors.card,
-          border: `1px solid ${colors.border}`,
-        };
-      
-      case 'gradient':
-        return {
-          ...baseStyles,
-          background: 'var(--gradient-card)',
-          border: `1px solid var(--green-200)`,
-        };
-      
-      default: // default
-        return {
-          ...baseStyles,
-          backgroundColor: colors.card,
-          boxShadow: isDark 
-            ? '0 1px 3px rgba(0, 0, 0, 0.2)' 
-            : '0 1px 3px rgba(0, 0, 0, 0.1)',
-        };
-    }
-  };
-
-  // ✅ Исправленные обработчики hover эффектов
-  const handleMouseEnter = (e: MouseEvent<HTMLDivElement>) => {
-    if (!hover) return;
-
-    switch (variant) {
-      case 'elevated':
-        e.currentTarget.style.transform = 'translateY(-4px)';
-        e.currentTarget.style.boxShadow = isDark 
-          ? '0 8px 25px rgba(0, 0, 0, 0.4)' 
-          : '0 8px 25px rgba(0, 0, 0, 0.15)';
-        break;
-      case 'bordered':
-        e.currentTarget.style.borderColor = colors.tint;
-        e.currentTarget.style.boxShadow = `0 0 0 1px ${colors.tint}20`;
-        break;
-      case 'gradient':
-        e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = `0 8px 25px ${colors.tint}30`;
-        break;
-      default:
-        e.currentTarget.style.boxShadow = isDark 
-          ? '0 4px 12px rgba(0, 0, 0, 0.3)' 
-          : '0 4px 12px rgba(0, 0, 0, 0.15)';
-        break;
-    }
-  };
-
-  const handleMouseLeave = (e: MouseEvent<HTMLDivElement>) => {
-    if (!hover) return;
-    
-    // Возвращаем исходные стили
-    const originalStyles = getVariantStyles();
-    Object.assign(e.currentTarget.style, originalStyles);
-  };
-
-  // ✅ Объединяем все стили
-  const finalStyles: CSSProperties = {
-    ...getVariantStyles(),
-    ...style, // Внешние стили имеют приоритет
-  };
+  ...props 
+}, ref) => {
+  const aspectClasses = {
+    square: 'aspect-square',
+    portrait: 'aspect-[3/4]',
+    landscape: 'aspect-[4/3]',
+  }
 
   return (
-    <div
-      className={`card-component ${className}`}
-      style={finalStyles}
-      onClick={onClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+    <Card
+      ref={ref}
+      variant={variant}
+      padding={padding}
+      className={cn(
+        'group overflow-hidden relative',
+        className
+      )}
+      {...props}
     >
-      {children}
-    </div>
-  );
-}
+      {/* Image Container */}
+      {imageSlot && (
+        <div className={cn('relative overflow-hidden bg-neutral-100 dark:bg-neutral-800', aspectClasses[aspectRatio])}>
+          {imageSlot}
+          
+          {/* Badge Overlay */}
+          {badgeSlot && (
+            <div className="absolute top-3 left-3 z-10">
+              {badgeSlot}
+            </div>
+          )}
+          
+          {/* Action Overlay */}
+          {actionSlot && (
+            <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {actionSlot}
+            </div>
+          )}
+          
+          {/* Overlay gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        </div>
+      )}
+      
+      {/* Content */}
+      <div className="p-4">
+        {children}
+      </div>
+    </Card>
+  )
+})
+ProductCard.displayName = "ProductCard"
 
-// Дополнительные подкомпоненты для структурирования
-export function CardHeader({ 
-  children, 
-  className = '' 
-}: { 
-  children: React.ReactNode; 
-  className?: string 
-}) {
-  const headerStyle: CSSProperties = { marginBottom: '1rem' };
-  
-  return (
-    <div className={`card-header ${className}`} style={headerStyle}>
-      {children}
-    </div>
-  );
-}
-
-export function CardContent({ 
-  children, 
-  className = '' 
-}: { 
-  children: React.ReactNode; 
-  className?: string 
-}) {
-  return (
-    <div className={`card-content ${className}`}>
-      {children}
-    </div>
-  );
-}
-
-export function CardFooter({ 
-  children, 
-  className = '' 
-}: { 
-  children: React.ReactNode; 
-  className?: string 
-}) {
-  const { colors } = useAppTheme();
-  
-  const footerStyle: CSSProperties = { 
-    marginTop: '1rem', 
-    paddingTop: '1rem',
-    borderTop: `1px solid ${colors.border}` 
-  };
-  
-  return (
-    <div 
-      className={`card-footer ${className}`} 
-      style={footerStyle}
-    >
-      {children}
-    </div>
-  );
+export { 
+  Card, 
+  CardHeader, 
+  CardFooter, 
+  CardTitle, 
+  CardDescription, 
+  CardContent,
+  ProductCard,
+  cardVariants
 }

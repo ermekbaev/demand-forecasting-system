@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { ProductCard } from '../components/products/ProductCard';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
-// В src/app/page.tsx в самом начале после других импортов
 import { SearchBar } from '../components/search/SearchBar';
+import { cn } from '@/lib/utils';
 
 // Типы на основе реальных данных API
 interface Product {
@@ -31,13 +31,6 @@ interface Category {
 }
 
 // Иконки с обновленным дизайном
-const SearchIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <circle cx="11" cy="11" r="8"/>
-    <path d="m21 21-4.35-4.35"/>
-  </svg>
-);
-
 const ArrowRightIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
     <path d="M5 12h14"/>
@@ -86,7 +79,6 @@ export default function HomePage() {
         
         // Загружаем продукты (первые 12 для главной страницы)
         const productsResponse = await fetch('/api/products?limit=12');
-        // Можно вернуть featured=true позже, когда убедимся что API работает
         if (!productsResponse.ok) {
           throw new Error('Ошибка загрузки продуктов');
         }
@@ -180,7 +172,6 @@ export default function HomePage() {
   };
 
   // Обработка поиска
-// Заменить старую функцию на эту:
   const handleSearch = (searchQuery: string) => {
     if (!searchQuery.trim()) return;
     window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
@@ -188,34 +179,18 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'var(--color-background)',
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div
-            className="animate-spin rounded-full h-16 w-16 border-4 border-t-transparent"
-            style={{ 
-              background: 'var(--gradient-emerald)',
-              WebkitMask: 'radial-gradient(circle at center, transparent 50%, black 51%)',
-              mask: 'radial-gradient(circle at center, transparent 50%, black 51%)',
-              margin: '0 auto 24px',
-            }}
+      <div className="min-h-screen flex items-center justify-center bg-theme-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 bg-gradient-emerald mb-6 mx-auto"
+               style={{ 
+                 WebkitMask: 'radial-gradient(circle at center, transparent 50%, black 51%)',
+                 mask: 'radial-gradient(circle at center, transparent 50%, black 51%)',
+               }} 
           />
-          <div style={{
-            width: '200px',
-            height: '4px',
-            background: 'var(--color-border)',
-            borderRadius: '2px',
-            overflow: 'hidden',
-            margin: '0 auto 16px',
-          }}>
-            <div className="loading-progress" style={{ height: '100%', borderRadius: '2px' }} />
+          <div className="w-50 h-1 bg-border-light dark:bg-border-dark rounded overflow-hidden mx-auto mb-4">
+            <div className="h-full bg-gradient-emerald rounded loading-progress" />
           </div>
-          <p style={{ color: 'var(--color-placeholder)', fontSize: '16px', fontWeight: '500' }}>
+          <p className="text-theme-secondary text-base font-medium">
             Загружаем коллекцию...
           </p>
         </div>
@@ -225,33 +200,16 @@ export default function HomePage() {
 
   if (error) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'var(--color-background)',
-        padding: '20px',
-      }}>
-        <Card variant="elevated" style={{ textAlign: 'center', maxWidth: '400px' }}>
-          <div style={{ marginBottom: '24px' }}>
-            <div style={{
-              width: '64px',
-              height: '64px',
-              background: 'var(--gradient-primary)',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 16px',
-              opacity: 0.8,
-            }}>
-              <span style={{ fontSize: '24px' }}>⚠️</span>
+      <div className="min-h-screen flex items-center justify-center bg-theme-background p-5">
+        <Card variant="elevated" className="text-center max-w-md">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 opacity-80">
+              <span className="text-2xl">⚠️</span>
             </div>
-            <h2 style={{ color: 'var(--color-error)', marginBottom: '8px', fontSize: '20px', fontWeight: '600' }}>
+            <h2 className="text-theme-primary text-xl font-semibold mb-2">
               Ошибка загрузки
             </h2>
-            <p style={{ color: 'var(--color-placeholder)', marginBottom: '24px', lineHeight: '1.5' }}>
+            <p className="text-theme-secondary mb-6 leading-relaxed">
               {error}
             </p>
           </div>
@@ -264,137 +222,63 @@ export default function HomePage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--color-background)' }}>
+    <div className="min-h-screen bg-theme-background">
       {/* Премиальный героический баннер */}
-      <section className="hero-gradient" style={{
-        position: 'relative',
-        padding: '100px 20px 120px',
-        overflow: 'visible',
-        background: 'var(--gradient-hero)',
-        zIndex: 1,
-      }}>
+      <section className="hero-gradient relative overflow-visible z-10 py-25 px-5 lg:py-30">
         {/* Декоративные элементы с анимацией */}
-        <div className="animate-float" style={{
-          position: 'absolute',
-          top: '15%',
-          left: '8%',
-          width: '120px',
-          height: '120px',
-          background: 'rgba(52, 211, 153, 0.1)',
-          borderRadius: '50%',
-          border: '1px solid rgba(52, 211, 153, 0.2)',
-        }} />
-        <div className="animate-float" style={{
-          position: 'absolute',
-          top: '50%',
-          right: '10%',
-          width: '80px',
-          height: '80px',
-          background: 'rgba(16, 185, 129, 0.15)',
-          borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%',
-          animationDelay: '2s',
-        }} />
-        <div className="animate-float" style={{
-          position: 'absolute',
-          bottom: '20%',
-          left: '15%',
-          width: '60px',
-          height: '60px',
-          background: 'rgba(6, 95, 70, 0.2)',
-          borderRadius: '40% 60% 60% 40% / 60% 30% 70% 40%',
-          animationDelay: '4s',
-        }} />
+        <div className="animate-float absolute top-[15%] left-[8%] w-30 h-30 bg-emerald-500/10 rounded-full border border-emerald-500/20" />
+        <div className="animate-float absolute top-1/2 right-[10%] w-20 h-20 bg-emerald-500/15 border border-emerald-400/20"
+             style={{ 
+               borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%',
+               animationDelay: '2s'
+             }} />
+        <div className="animate-float absolute bottom-[20%] left-[15%] w-15 h-15 bg-emerald-800/20 border border-emerald-600/20"
+             style={{ 
+               borderRadius: '40% 60% 60% 40% / 60% 30% 70% 40%',
+               animationDelay: '4s'
+             }} />
 
-        <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <div className="max-w-screen-xl mx-auto relative z-10">
           {/* Премиальный бейдж */}
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '12px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            padding: '12px 24px',
-            borderRadius: '50px',
-            marginBottom: '32px',
-            backdropFilter: 'blur(16px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            color: 'rgba(255, 255, 255, 0.9)',
-          }}>
+          <div className="inline-flex items-center gap-3 glass px-6 py-3 rounded-full mb-8 border border-white/20 text-white/90">
             <DiamondIcon size={18} />
-            <span style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '0.5px' }}>
+            <span className="text-sm font-semibold tracking-wider uppercase">
               PREMIUM COLLECTION 2024
             </span>
           </div>
 
           {/* Главный заголовок с градиентом */}
-          <h1 style={{
-            fontSize: 'clamp(40px, 8vw, 80px)',
-            fontWeight: '900',
-            marginBottom: '32px',
-            lineHeight: '1.1',
-            letterSpacing: '-0.02em',
-            textAlign: 'center',
-          }}>
-            <span style={{ color: '#ffffff' }}>Элегантность</span>
-            <br />
-            <span className="text-gradient" style={{
-              background: 'linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>
+          <h1 className="text-center mb-8 leading-tight tracking-tight">
+            <span className="block text-white text-4xl sm:text-5xl lg:text-7xl font-black">
+              Элегантность
+            </span>
+            <span className="block text-gradient-hero text-4xl sm:text-5xl lg:text-7xl font-black">
               в каждой детали
             </span>
           </h1>
 
-          <p style={{
-            fontSize: '20px',
-            marginBottom: '48px',
-            opacity: 0.9,
-            maxWidth: '700px',
-            margin: '0 auto 48px',
-            lineHeight: '1.6',
-            textAlign: 'center',
-            color: 'rgba(255, 255, 255, 0.8)',
-            fontWeight: '400',
-          }}>
+          <p className="text-center text-lg sm:text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed font-normal">
             Откройте для себя эксклюзивную коллекцию премиальной одежды и обуви. 
             Безупречное качество, современный дизайн и непревзойденный комфорт.
           </p>
 
           {/* Премиальный поиск */}
-            <div style={{
-              maxWidth: '600px',
-              margin: '0 auto 56px',
-              position: 'relative',
-            }}>
-              <SearchBar 
-                placeholder="Поиск премиальных товаров..."
-                variant="hero"
-                onSearch={handleSearch}
-                showSuggestions={true}
-              />
-            </div>
+          <div className="max-w-2xl mx-auto mb-14 relative z-50">
+            <SearchBar 
+              placeholder="Поиск премиальных товаров..."
+              variant="hero"
+              onSearch={handleSearch}
+              showSuggestions={true}
+            />
+          </div>
 
           {/* Кнопки действий */}
-          <div style={{
-            display: 'flex',
-            gap: '20px',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-          }}>
+          <div className="flex gap-5 justify-center flex-wrap">
             <Button
               variant="outline"
               size="lg"
               onClick={() => window.location.href = '/catalog'}
-              className="glass"
-              style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                color: 'white',
-                backdropFilter: 'blur(16px)',
-                fontWeight: '600',
-                padding: '16px 32px',
-              }}
+              className="glass border-white/20 text-white backdrop-blur-lg font-semibold px-8"
             >
               Каталог
               <ArrowRightIcon size={20} />
@@ -403,12 +287,7 @@ export default function HomePage() {
               variant="ghost"
               size="lg"
               onClick={() => window.location.href = '/popular'}
-              style={{
-                color: 'rgba(255, 255, 255, 0.9)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                fontWeight: '600',
-                padding: '16px 32px',
-              }}
+              className="text-white/90 border border-white/20 font-semibold px-8"
             >
               <TrendingUpIcon size={20} />
               Тренды
@@ -417,83 +296,40 @@ export default function HomePage() {
         </div>
 
         {/* Дополнительные декоративные элементы */}
-        <div style={{
-          position: 'absolute',
-          bottom: '-50px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '200px',
-          height: '100px',
-          background: 'radial-gradient(ellipse, rgba(52, 211, 153, 0.3) 0%, transparent 70%)',
-          filter: 'blur(40px)',
-        }} />
+        <div className="absolute bottom-[-50px] left-1/2 transform -translate-x-1/2 w-50 h-25 bg-emerald-500/30 rounded-full filter blur-3xl" />
       </section>
 
       {/* Основной контент с обновленным дизайном */}
-      <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '60px 12px' }}>
+      <div className="max-w-screen-2xl mx-auto px-3 py-15">
         
         {/* Секция категорий */}
         {categories.length > 0 && (
-          <section style={{ marginBottom: '70px' }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '32px',
-            }}>
+          <section className="mb-18">
+            <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
               <div>
-                <div style={{
-                  display: 'inline-block',
-                  padding: '8px 16px',
-                  background: 'var(--gradient-emerald)',
-                  borderRadius: '20px',
-                  marginBottom: '12px',
-                }}>
-                  <span style={{ color: 'white', fontSize: '12px', fontWeight: '700', letterSpacing: '1px' }}>
+                <div className="inline-block px-4 py-2 bg-gradient-emerald rounded-full mb-3">
+                  <span className="text-white text-xs font-bold tracking-wider uppercase">
                     КАТЕГОРИИ
                   </span>
                 </div>
-                <h2 style={{
-                  fontSize: '36px',
-                  fontWeight: '800',
-                  color: 'var(--color-text)',
-                  marginBottom: '8px',
-                  letterSpacing: '-0.01em',
-                }}>
+                <h2 className="text-theme-primary text-4xl font-extrabold mb-2 tracking-tight">
                   Выберите стиль
                 </h2>
-                <p style={{
-                  color: 'var(--color-placeholder)',
-                  fontSize: '18px',
-                  fontWeight: '400',
-                }}>
+                <p className="text-theme-secondary text-lg font-normal">
                   Откройте для себя мир премиальной моды
                 </p>
               </div>
               <Button 
                 variant="outline"
                 onClick={() => window.location.href = '/categories'}
-                style={{
-                  borderColor: 'var(--emerald-500)',
-                  color: 'var(--emerald-600)',
-                  fontWeight: '600',
-                }}
+                className="border-emerald-500 text-emerald-600 font-semibold"
               >
                 Все категории
                 <ArrowRightIcon size={16} />
               </Button>
             </div>
 
-            <div 
-              className="categories-grid"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                gap: '16px',
-                justifyItems: 'stretch',
-                width: '100%',
-              }}
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 justify-items-stretch w-full">
               {categories.slice(0, 4).map((category, index) => (
                 <Card
                   key={category.slug}
@@ -501,89 +337,27 @@ export default function HomePage() {
                   hover
                   padding="none"
                   onClick={() => window.location.href = `/category/${category.slug}`}
-                  className="premium-card emerald-accent"
-                  style={{
-                    cursor: 'pointer',
-                    background: 'var(--gradient-surface)',
-                    border: '1px solid var(--color-border)',
-                    overflow: 'hidden',
-                    position: 'relative',
-                    height: '200px',
-                    width: '100%',
-                  }}
+                  className="premium-card emerald-accent cursor-pointer bg-gradient-surface dark:bg-gradient-surface-dark overflow-hidden relative h-50 w-full"
                 >
                   {/* Декоративный градиент */}
-                  <div style={{
-                    height: '120px',
-                    background: `linear-gradient(135deg, var(--emerald-600) 0%, var(--emerald-700) 100%)`,
-                    position: 'relative',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
+                  <div className="h-30 bg-gradient-to-br from-emerald-600 to-emerald-700 relative flex items-center justify-center">
                     {/* Декоративные элементы */}
-                    <div style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      width: '24px',
-                      height: '24px',
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      borderRadius: '50%',
-                    }} />
-                    <div style={{
-                      position: 'absolute',
-                      bottom: '12px',
-                      left: '12px',
-                      width: '12px',
-                      height: '12px',
-                      background: 'rgba(255, 255, 255, 0.3)',
-                      borderRadius: '50%',
-                    }} />
+                    <div className="absolute top-3 right-3 w-6 h-6 bg-white/20 rounded-full" />
+                    <div className="absolute bottom-3 left-3 w-3 h-3 bg-white/30 rounded-full" />
                     
                     {/* Название категории */}
-                    <div className="glass" style={{
-                      padding: '8px 20px',
-                      borderRadius: '20px',
-                      textAlign: 'center',
-                      background: 'rgba(255, 255, 255, 0.15)',
-                      backdropFilter: 'blur(12px)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                    }}>
-                      <span style={{
-                        fontWeight: '700',
-                        color: '#ffffff',
-                        fontSize: '14px',
-                        letterSpacing: '0.5px',
-                      }}>
+                    <div className="glass px-5 py-2 rounded-full text-center bg-white/15 backdrop-blur-md border border-white/20">
+                      <span className="font-bold text-white text-sm tracking-wide">
                         {category.name}
                       </span>
                     </div>
                   </div>
                   
-                  <div style={{ 
-                    padding: '16px', 
-                    textAlign: 'center',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    height: '80px',
-                  }}>
-                    <p style={{
-                      color: 'var(--color-placeholder)',
-                      fontSize: '12px',
-                      fontWeight: '500',
-                      marginBottom: '6px',
-                    }}>
+                  <div className="p-4 text-center flex flex-col justify-center h-20">
+                    <p className="text-theme-secondary text-xs font-medium mb-1.5">
                       {category.count} товаров
                     </p>
-                    <div style={{
-                      width: '30px',
-                      height: '2px',
-                      background: 'var(--gradient-emerald)',
-                      margin: '0 auto',
-                      borderRadius: '1px',
-                    }} />
+                    <div className="w-8 h-0.5 bg-gradient-emerald mx-auto rounded" />
                   </div>
                 </Card>
               ))}
@@ -594,68 +368,32 @@ export default function HomePage() {
         {/* Секция продуктов */}
         {products.length > 0 && (
           <section>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '32px',
-            }}>
+            <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
               <div>
-                <div style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '8px 16px',
-                  background: 'var(--gradient-emerald)',
-                  borderRadius: '20px',
-                  marginBottom: '12px',
-                }}>
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-emerald rounded-full mb-3">
                   <SparklesIcon size={14} />
-                  <span style={{ color: 'white', fontSize: '12px', fontWeight: '700', letterSpacing: '1px' }}>
+                  <span className="text-white text-xs font-bold tracking-wider uppercase">
                     КОЛЛЕКЦИЯ
                   </span>
                 </div>
-                <h2 style={{
-                  fontSize: '36px',
-                  fontWeight: '800',
-                  color: 'var(--color-text)',
-                  marginBottom: '8px',
-                  letterSpacing: '-0.01em',
-                }}>
+                <h2 className="text-theme-primary text-4xl font-extrabold mb-2 tracking-tight">
                   Премиальные товары
                 </h2>
-                <p style={{
-                  color: 'var(--color-placeholder)',
-                  fontSize: '18px',
-                  fontWeight: '400',
-                }}>
+                <p className="text-theme-secondary text-lg font-normal">
                   Самые востребованные позиции сезона
                 </p>
               </div>
               <Button 
                 variant="gradient"
                 onClick={() => window.location.href = '/catalog'}
-                style={{
-                  background: 'var(--gradient-button)',
-                  fontWeight: '600',
-                  boxShadow: 'var(--shadow-emerald)',
-                }}
+                className="bg-gradient-button font-semibold shadow-emerald"
               >
                 Смотреть все
                 <ArrowRightIcon size={16} />
               </Button>
             </div>
 
-            <div 
-              className="products-grid-compact"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                gap: '18px',
-                justifyItems: 'stretch',
-                width: '100%',
-              }}
-            >
+            <div className="products-grid-compact w-full">
               {products.map((product) => (
                 <ProductCard
                   key={product.slug}
@@ -686,181 +424,55 @@ export default function HomePage() {
         )}
 
         {/* Премиальная CTA секция */}
-        <section style={{
-          marginTop: '70px',
-          padding: '50px 24px',
-          background: 'var(--gradient-surface)',
-          borderRadius: '20px',
-          textAlign: 'center',
-          position: 'relative',
-          overflow: 'hidden',
-          border: '1px solid var(--color-border)',
-        }}>
+        <section className="mt-18 p-12 bg-gradient-surface dark:bg-gradient-surface-dark rounded-3xl text-center relative overflow-hidden border border-theme">
           {/* Декоративные элементы */}
-          <div className="animate-float" style={{
-            position: 'absolute',
-            top: '-100px',
-            right: '-100px',
-            width: '300px',
-            height: '300px',
-            background: 'var(--gradient-emerald)',
-            borderRadius: '50%',
-            opacity: 0.1,
-            filter: 'blur(60px)',
-          }} />
-          <div className="animate-float" style={{
-            position: 'absolute',
-            bottom: '-50px',
-            left: '-50px',
-            width: '200px',
-            height: '200px',
-            background: 'var(--gradient-emerald)',
-            borderRadius: '50%',
-            opacity: 0.08,
-            filter: 'blur(40px)',
-            animationDelay: '3s',
-          }} />
+          <div className="animate-float absolute -top-25 -right-25 w-75 h-75 bg-gradient-emerald rounded-full opacity-10 filter blur-3xl" />
+          <div className="animate-float absolute -bottom-12 -left-12 w-50 h-50 bg-gradient-emerald rounded-full opacity-8 filter blur-2xl"
+               style={{ animationDelay: '3s' }} />
           
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '12px 24px',
-              background: 'var(--gradient-emerald)',
-              borderRadius: '30px',
-              marginBottom: '24px',
-            }}>
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-emerald rounded-full mb-6">
               <DiamondIcon size={16} />
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: '700', letterSpacing: '1px' }}>
+              <span className="text-white text-xs font-bold tracking-wider uppercase">
                 ЭКСКЛЮЗИВ
               </span>
             </div>
             
-            <h3 style={{
-              fontSize: '42px',
-              fontWeight: '800',
-              color: 'var(--color-text)',
-              marginBottom: '16px',
-              letterSpacing: '-0.01em',
-            }}>
+            <h3 className="text-theme-primary text-5xl font-extrabold mb-4 tracking-tight">
               Станьте частью сообщества
             </h3>
-            <p style={{
-              fontSize: '20px',
-              color: 'var(--color-placeholder)',
-              marginBottom: '40px',
-              maxWidth: '600px',
-              margin: '0 auto 40px',
-              lineHeight: '1.6',
-              fontWeight: '400',
-            }}>
+            <p className="text-theme-secondary text-xl mb-10 max-w-2xl mx-auto leading-relaxed font-normal">
               Получайте эксклюзивные предложения, первыми узнавайте о новых коллекциях 
               и получите скидку 15% на первый заказ
             </p>
             
-            <div style={{
-              display: 'flex',
-              gap: '16px',
-              maxWidth: '500px',
-              margin: '0 auto',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-            }}>
+            <div className="flex gap-4 max-w-lg mx-auto flex-wrap justify-center">
               <input
                 type="email"
                 placeholder="Ваш email адрес"
-                style={{
-                  flex: 1,
-                  minWidth: '280px',
-                  padding: '18px 24px',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: '16px',
-                  fontSize: '16px',
-                  outline: 'none',
-                  transition: 'all 0.3s ease',
-                  background: 'var(--color-card)',
-                  color: 'var(--color-text)',
-                  fontWeight: '500',
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--emerald-500)';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.1)';
-                  e.target.style.transform = 'translateY(-2px)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'var(--color-border)';
-                  e.target.style.boxShadow = 'none';
-                  e.target.style.transform = 'translateY(0)';
-                }}
+                className="flex-1 min-w-[280px] input-theme px-6 py-4.5 text-base font-medium"
               />
               <Button 
                 variant="gradient" 
                 size="lg"
-                style={{
-                  background: 'var(--gradient-button)',
-                  fontWeight: '600',
-                  padding: '18px 32px',
-                  borderRadius: '16px',
-                  boxShadow: 'var(--shadow-emerald)',
-                }}
+                className="bg-gradient-button font-semibold px-8 py-4.5 rounded-2xl shadow-emerald"
               >
                 Подписаться
               </Button>
             </div>
 
             {/* Дополнительная информация */}
-            <div style={{
-              marginTop: '32px',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '24px',
-              flexWrap: 'wrap',
-            }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                color: 'var(--color-placeholder)',
-                fontSize: '14px',
-              }}>
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  background: 'var(--emerald-500)',
-                  borderRadius: '50%',
-                }} />
+            <div className="mt-8 flex justify-center items-center gap-6 flex-wrap">
+              <div className="flex items-center gap-2 text-theme-secondary text-sm">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full" />
                 Бесплатная доставка от 5000₽
               </div>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                color: 'var(--color-placeholder)',
-                fontSize: '14px',
-              }}>
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  background: 'var(--emerald-500)',
-                  borderRadius: '50%',
-                }} />
+              <div className="flex items-center gap-2 text-theme-secondary text-sm">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full" />
                 Гарантия качества
               </div>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                color: 'var(--color-placeholder)',
-                fontSize: '14px',
-              }}>
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  background: 'var(--emerald-500)',
-                  borderRadius: '50%',
-                }} />
+              <div className="flex items-center gap-2 text-theme-secondary text-sm">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full" />
                 Возврат 30 дней
               </div>
             </div>
@@ -868,248 +480,43 @@ export default function HomePage() {
         </section>
 
         {/* Секция статистики */}
-        <section style={{
-          marginTop: '60px',
-          padding: '40px 0',
-          borderTop: '1px solid var(--color-border)',
-          borderBottom: '1px solid var(--color-border)',
-        }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '24px',
-            textAlign: 'center',
-          }}>
+        <section className="mt-15 py-10 border-t border-b border-theme">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
             <div>
-              <div style={{
-                fontSize: '36px',
-                fontWeight: '800',
-                color: 'var(--emerald-600)',
-                marginBottom: '8px',
-              }}>
+              <div className="text-emerald-600 text-4xl font-extrabold mb-2">
                 10K+
               </div>
-              <p style={{
-                color: 'var(--color-placeholder)',
-                fontSize: '16px',
-                fontWeight: '500',
-              }}>
+              <p className="text-theme-secondary text-base font-medium">
                 Довольных клиентов
               </p>
             </div>
             <div>
-              <div style={{
-                fontSize: '36px',
-                fontWeight: '800',
-                color: 'var(--emerald-600)',
-                marginBottom: '8px',
-              }}>
+              <div className="text-emerald-600 text-4xl font-extrabold mb-2">
                 500+
               </div>
-              <p style={{
-                color: 'var(--color-placeholder)',
-                fontSize: '16px',
-                fontWeight: '500',
-              }}>
+              <p className="text-theme-secondary text-base font-medium">
                 Брендов в каталоге
               </p>
             </div>
             <div>
-              <div style={{
-                fontSize: '36px',
-                fontWeight: '800',
-                color: 'var(--emerald-600)',
-                marginBottom: '8px',
-              }}>
+              <div className="text-emerald-600 text-4xl font-extrabold mb-2">
                 98%
               </div>
-              <p style={{
-                color: 'var(--color-placeholder)',
-                fontSize: '16px',
-                fontWeight: '500',
-              }}>
+              <p className="text-theme-secondary text-base font-medium">
                 Положительных отзывов
               </p>
             </div>
             <div>
-              <div style={{
-                fontSize: '36px',
-                fontWeight: '800',
-                color: 'var(--emerald-600)',
-                marginBottom: '8px',
-              }}>
+              <div className="text-emerald-600 text-4xl font-extrabold mb-2">
                 24/7
               </div>
-              <p style={{
-                color: 'var(--color-placeholder)',
-                fontSize: '16px',
-                fontWeight: '500',
-              }}>
+              <p className="text-theme-secondary text-base font-medium">
                 Поддержка клиентов
               </p>
             </div>
           </div>
         </section>
       </div>
-
-      {/* CSS анимации для премиального эффекта */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { 
-            transform: translateY(0px) rotate(0deg); 
-          }
-          50% { 
-            transform: translateY(-20px) rotate(3deg); 
-          }
-        }
-
-        @keyframes gradient-shift {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
-        }
-
-        .hero-gradient {
-          background: var(--gradient-hero);
-          background-size: 400% 400%;
-          animation: gradient-shift 20s ease infinite;
-        }
-
-        .text-gradient {
-          background: linear-gradient(135deg, #34d399 0%, #6ee7b7 50%, #a7f3d0 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .glass {
-          background: rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .premium-card {
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .premium-card:hover {
-          transform: translateY(-8px);
-          box-shadow: var(--shadow-emerald-lg);
-        }
-
-        .emerald-accent:hover {
-          box-shadow: var(--shadow-emerald-lg);
-        }
-
-        /* Адаптивность */
-        @media (max-width: 640px) {
-          .hero-gradient {
-            padding: 50px 12px 70px;
-          }
-          
-          h1 {
-            font-size: clamp(28px, 6vw, 48px) !important;
-          }
-          
-          .glass {
-            flex-direction: column;
-            gap: 16px;
-          }
-          
-          .glass input {
-            padding: 16px 24px;
-          }
-          
-          .products-grid-compact {
-            grid-template-columns: 1fr !important;
-            gap: 14px !important;
-          }
-          
-          .categories-grid {
-            grid-template-columns: 1fr !important;
-            gap: 12px !important;
-          }
-          
-          .container {
-            padding: 50px 8px !important;
-          }
-        }
-
-        @media (min-width: 641px) and (max-width: 768px) {
-          .products-grid-compact {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 16px !important;
-          }
-          
-          .categories-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 14px !important;
-          }
-        }
-
-        @media (min-width: 769px) and (max-width: 1024px) {
-          .products-grid-compact {
-            grid-template-columns: repeat(3, 1fr) !important;
-            gap: 18px !important;
-          }
-          
-          .categories-grid {
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 16px !important;
-          }
-        }
-
-        @media (min-width: 1025px) and (max-width: 1200px) {
-          .products-grid-compact {
-            grid-template-columns: repeat(3, 1fr) !important;
-            gap: 18px !important;
-          }
-          
-          .categories-grid {
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 16px !important;
-          }
-        }
-
-        @media (min-width: 1201px) and (max-width: 1400px) {
-          .products-grid-compact {
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 18px !important;
-          }
-          
-          .categories-grid {
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 16px !important;
-          }
-        }
-
-        @media (min-width: 1401px) {
-          .products-grid-compact {
-            grid-template-columns: repeat(5, 1fr) !important;
-            gap: 20px !important;
-          }
-          
-          .categories-grid {
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 16px !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }
