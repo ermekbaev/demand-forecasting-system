@@ -5,6 +5,7 @@ import { ProductCard } from '../components/products/ProductCard';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { SearchBar } from '../components/search/SearchBar';
+import { Icon } from '../components/ui/Icon';
 import { cn } from '@/lib/utils';
 
 // Типы на основе реальных данных API
@@ -29,40 +30,6 @@ interface Category {
   count: number;
   slug: string;
 }
-
-// Иконки с обновленным дизайном
-const ArrowRightIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <path d="M5 12h14"/>
-    <path d="m12 5 7 7-7 7"/>
-  </svg>
-);
-
-const TrendingUpIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/>
-    <polyline points="16,7 22,7 22,13"/>
-  </svg>
-);
-
-const SparklesIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-    <path d="M5 3v4"/>
-    <path d="M19 17v4"/>
-    <path d="M3 5h4"/>
-    <path d="M17 19h4"/>
-  </svg>
-);
-
-const DiamondIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M6 3h12l4 6-10 12L2 9z"/>
-    <path d="m12 22 4-16"/>
-    <path d="m8 6 4 16"/>
-    <path d="M2 9h20"/>
-  </svg>
-);
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -178,15 +145,16 @@ export default function HomePage() {
   };
 
   if (loading) {
-    return (
+    // Обработка поиска с правильной типизацией
+  const handleSearchWithQuery = (searchQuery: string) => {
+    if (!searchQuery.trim()) return;
+    window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+  };
+
+  return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 bg-gradient-emerald mb-6 mx-auto"
-               style={{ 
-                 WebkitMask: 'radial-gradient(circle at center, transparent 50%, black 51%)',
-                 mask: 'radial-gradient(circle at center, transparent 50%, black 51%)',
-               }} 
-          />
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-border border-t-primary mx-auto mb-6" />
           <div className="w-50 h-1 bg-border rounded overflow-hidden mx-auto mb-4">
             <div className="h-full bg-gradient-emerald rounded animate-loading-progress" />
           </div>
@@ -201,7 +169,7 @@ export default function HomePage() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-5">
-        <Card variant="elevated" className="text-center max-w-md">
+        <Card variant="elevated" className="text-center max-w-md p-8">
           <div className="mb-6">
             <div className="w-16 h-16 bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center mx-auto mb-4 opacity-80">
               <span className="text-2xl">⚠️</span>
@@ -235,7 +203,7 @@ export default function HomePage() {
         <div className="max-w-screen-xl mx-auto relative z-10">
           {/* Премиальный бейдж */}
           <div className="inline-flex items-center gap-3 glass px-6 py-3 rounded-full mb-8 border border-white/20 text-white/90">
-            <DiamondIcon size={18} />
+            <Icon name="gem" size="sm" />
             <span className="text-sm font-semibold tracking-wider uppercase">
               PREMIUM COLLECTION 2024
             </span>
@@ -261,7 +229,7 @@ export default function HomePage() {
             <SearchBar 
               placeholder="Поиск премиальных товаров..."
               variant="hero"
-              onSearch={handleSearch}
+              onSearch={handleSearchWithQuery}
               showSuggestions={true}
             />
           </div>
@@ -275,7 +243,7 @@ export default function HomePage() {
               className="glass border-white/20 text-white backdrop-blur-lg font-semibold px-8"
             >
               Каталог
-              <ArrowRightIcon size={20} />
+              <Icon name="arrow-right" size="sm" />
             </Button>
             <Button
               variant="ghost"
@@ -283,7 +251,7 @@ export default function HomePage() {
               onClick={() => window.location.href = '/popular'}
               className="text-white/90 border border-white/20 font-semibold px-8"
             >
-              <TrendingUpIcon size={20} />
+              <Icon name="trending-up" size="sm" />
               Тренды
             </Button>
           </div>
@@ -319,7 +287,7 @@ export default function HomePage() {
                 className="border-emerald-500 text-emerald-600 font-semibold"
               >
                 Все категории
-                <ArrowRightIcon size={16} />
+                <Icon name="arrow-right" size="sm" />
               </Button>
             </div>
 
@@ -365,7 +333,7 @@ export default function HomePage() {
             <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
               <div>
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-emerald rounded-full mb-3">
-                  <SparklesIcon size={14} />
+                  <Icon name="sparkles" size="sm" className="text-white" />
                   <span className="text-white text-xs font-bold tracking-wider uppercase">
                     КОЛЛЕКЦИЯ
                   </span>
@@ -383,7 +351,7 @@ export default function HomePage() {
                 className="bg-gradient-button font-semibold shadow-emerald"
               >
                 Смотреть все
-                <ArrowRightIcon size={16} />
+                <Icon name="arrow-right" size="sm" />
               </Button>
             </div>
 
@@ -425,7 +393,7 @@ export default function HomePage() {
           
           <div className="relative z-10">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-emerald rounded-full mb-6">
-              <DiamondIcon size={16} />
+              <Icon name="gem" size="sm" className="text-white" />
               <span className="text-white text-xs font-bold tracking-wider uppercase">
                 ЭКСКЛЮЗИВ
               </span>
@@ -443,12 +411,12 @@ export default function HomePage() {
               <input
                 type="email"
                 placeholder="Ваш email адрес"
-                className="flex-1 min-w-[280px] input-theme px-6 py-4.5 text-base font-medium"
+                className="flex-1 min-w-[280px] px-6 py-4 text-base font-medium bg-background border border-input rounded-xl text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/20 transition-all duration-200"
               />
               <Button 
                 variant="gradient" 
                 size="lg"
-                className="bg-gradient-button font-semibold px-8 py-4.5 rounded-2xl shadow-emerald"
+                className="bg-gradient-button font-semibold px-8 py-4 rounded-2xl shadow-emerald"
               >
                 Подписаться
               </Button>

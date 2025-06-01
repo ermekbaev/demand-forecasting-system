@@ -67,7 +67,7 @@ export function ClientLayoutWrapper({ children }: ClientLayoutWrapperProps) {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Header - передаем счетчики */}
       <Header />
       

@@ -7,37 +7,8 @@ import { ProductCard } from '@/components/products/ProductCard';
 import { SearchFilters } from '@/components/search/SearchFilters';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { useAppTheme } from '@/hooks/useTheme';
-
-// Иконки
-const FilterIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
-  </svg>
-);
-
-const SortIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="m3 16 4 4 4-4"/>
-    <path d="M7 20V4"/>
-    <path d="m21 8-4-4-4 4"/>
-    <path d="M17 4v16"/>
-  </svg>
-);
-
-const XIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M18 6L6 18"/>
-    <path d="M6 6l12 12"/>
-  </svg>
-);
-
-const SearchIcon = ({ size = 24 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="11" cy="11" r="8"/>
-    <path d="m21 21-4.35-4.35"/>
-  </svg>
-);
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/utils';
 
 // Интерфейсы
 interface Product {
@@ -85,7 +56,6 @@ const sortOptions = [
 ];
 
 function SearchPageContent() {
-  const { colors, isDark } = useAppTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -108,7 +78,7 @@ function SearchPageContent() {
     genders: [],
   });
 
-  // ✅ Доступные опции для фильтров (можно загружать с API)
+  // ✅ Доступные опции для фильтров
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     brands: [
       { name: 'Nike', count: 156 },
@@ -299,22 +269,11 @@ function SearchPageContent() {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: colors.background,
-      paddingTop: '40px',
-    }}>
-      <div style={{ 
-        maxWidth: '1600px', 
-        margin: '0 auto', 
-        padding: '0 20px',
-      }}>
+    <div className="min-h-screen bg-background pt-10">
+      <div className="max-w-[1600px] mx-auto px-5">
         
         {/* Поисковая строка */}
-        <div style={{ 
-          marginBottom: '40px',
-          textAlign: 'center',
-        }}>
+        <div className="mb-10 text-center">
           <SearchBar 
             placeholder="Поиск товаров, брендов, категорий..."
             onSearch={handleNewSearch}
@@ -324,59 +283,26 @@ function SearchPageContent() {
         </div>
 
         {/* Заголовок результатов */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '24px',
-          flexWrap: 'wrap',
-          gap: '16px',
-        }}>
+        <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
           <div>
-            <h1 style={{
-              fontSize: '32px',
-              fontWeight: '800',
-              color: colors.text,
-              marginBottom: '8px',
-              letterSpacing: '-0.01em',
-            }}>
+            <h1 className="text-3xl font-extrabold text-foreground mb-2 tracking-tight">
               {query ? `Результаты поиска "${query}"` : 'Поиск товаров'}
             </h1>
             {totalResults > 0 && (
-              <p style={{
-                fontSize: '16px',
-                color: colors.placeholder,
-                fontWeight: '500',
-              }}>
+              <p className="text-base text-muted-foreground font-medium">
                 Найдено {totalResults} товаров
               </p>
             )}
           </div>
 
           {/* Кнопки управления */}
-          <div style={{
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-          }}>
+          <div className="flex gap-3 items-center flex-wrap">
             {/* Сортировка */}
-            <div style={{ position: 'relative' }}>
+            <div className="relative">
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                style={{
-                  padding: '12px 40px 12px 16px',
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: '12px',
-                  background: colors.card,
-                  color: colors.text,
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  outline: 'none',
-                  appearance: 'none',
-                }}
+                className="pl-4 pr-10 py-3 border border-border rounded-xl bg-card text-foreground text-sm font-medium cursor-pointer outline-none appearance-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
               >
                 {sortOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -384,16 +310,10 @@ function SearchPageContent() {
                   </option>
                 ))}
               </select>
-              <SortIcon 
-                size={16} 
-                style={{
-                  position: 'absolute',
-                  right: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: colors.placeholder,
-                  pointerEvents: 'none',
-                }}
+              <Icon 
+                name="chevron-down"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none"
+                size="sm"
               />
             </div>
 
@@ -401,22 +321,14 @@ function SearchPageContent() {
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              style={{
-                borderColor: hasActiveFilters() ? colors.tint : colors.border,
-                color: hasActiveFilters() ? colors.tint : colors.text,
-                background: hasActiveFilters() ? 'rgba(16, 185, 129, 0.1)' : colors.card,
-              }}
+              className={cn(
+                hasActiveFilters() && "border-primary text-primary bg-primary/5"
+              )}
             >
-              <FilterIcon size={16} />
+              <Icon name="filter" size="sm" />
               Фильтры
               {hasActiveFilters() && (
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  background: colors.tint,
-                  borderRadius: '50%',
-                  marginLeft: '4px',
-                }} />
+                <div className="w-2 h-2 bg-primary rounded-full ml-1" />
               )}
             </Button>
           </div>
@@ -424,50 +336,22 @@ function SearchPageContent() {
 
         {/* ✅ Активные фильтры - обновленная версия */}
         {hasActiveFilters() && (
-          <div style={{
-            display: 'flex',
-            gap: '8px',
-            marginBottom: '24px',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-          }}>
-            <span style={{
-              fontSize: '14px',
-              fontWeight: '600',
-              color: colors.text,
-            }}>
+          <div className="flex gap-2 mb-6 flex-wrap items-center">
+            <span className="text-sm font-semibold text-foreground">
               Активные фильтры:
             </span>
             
             {getActiveFilterTags().map((tag, index) => (
               <div
                 key={`${tag.type}-${tag.value}-${index}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '6px 12px',
-                  background: colors.cardBackground,
-                  borderRadius: '20px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: colors.text,
-                }}
+                className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full text-sm font-medium text-foreground"
               >
                 {tag.label}
                 <button
                   onClick={() => removeFilter(tag.type, tag.value)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: colors.placeholder,
-                    padding: '2px',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
+                  className="bg-transparent border-0 cursor-pointer text-muted-foreground hover:text-foreground p-0.5 flex items-center transition-colors"
                 >
-                  <XIcon size={12} />
+                  <Icon name="close" size="xs" />
                 </button>
               </div>
             ))}
@@ -476,10 +360,7 @@ function SearchPageContent() {
               variant="ghost"
               size="sm"
               onClick={clearAllFilters}
-              style={{
-                color: colors.placeholder,
-                fontSize: '13px',
-              }}
+              className="text-muted-foreground text-xs"
             >
               Очистить все
             </Button>
@@ -487,12 +368,10 @@ function SearchPageContent() {
         )}
 
         {/* Основной контент */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: showFilters ? '280px 1fr' : '1fr',
-          gap: '32px',
-          alignItems: 'start',
-        }}>
+        <div className={cn(
+          "grid gap-8 items-start",
+          showFilters ? "grid-cols-1 lg:grid-cols-[280px_1fr]" : "grid-cols-1"
+        )}>
           
           {/* ✅ Новая панель фильтров */}
           {showFilters && (
@@ -508,23 +387,10 @@ function SearchPageContent() {
           {/* Результаты поиска */}
           <div>
             {loading && (
-              <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '400px',
-              }}>
-                <div style={{ textAlign: 'center' }}>
-                  <div
-                    className="animate-spin rounded-full h-16 w-16 border-4 border-t-transparent"
-                    style={{ 
-                      background: 'var(--gradient-emerald)',
-                      WebkitMask: 'radial-gradient(circle at center, transparent 50%, black 51%)',
-                      mask: 'radial-gradient(circle at center, transparent 50%, black 51%)',
-                      margin: '0 auto 16px',
-                    }}
-                  />
-                  <p style={{ color: colors.placeholder, fontSize: '16px' }}>
+              <div className="flex justify-center items-center min-h-[400px]">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-border border-t-primary mx-auto mb-4" />
+                  <p className="text-muted-foreground text-base">
                     Ищем товары...
                   </p>
                 </div>
@@ -532,25 +398,12 @@ function SearchPageContent() {
             )}
 
             {error && (
-              <Card variant="elevated" style={{ textAlign: 'center', padding: '40px' }}>
-                <div style={{
-                  fontSize: '48px',
-                  marginBottom: '16px',
-                }}>
-                  😕
-                </div>
-                <h3 style={{
-                  fontSize: '20px',
-                  fontWeight: '600',
-                  color: colors.text,
-                  marginBottom: '8px',
-                }}>
+              <Card variant="elevated" className="text-center p-10">
+                <div className="text-5xl mb-4">😕</div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">
                   Ошибка поиска
                 </h3>
-                <p style={{
-                  color: colors.placeholder,
-                  marginBottom: '24px',
-                }}>
+                <p className="text-muted-foreground mb-6">
                   {error}
                 </p>
                 <Button
@@ -563,39 +416,18 @@ function SearchPageContent() {
             )}
 
             {!loading && !error && products.length === 0 && query && (
-              <Card variant="elevated" style={{ textAlign: 'center', padding: '60px 40px' }}>
-                <div style={{
-                  width: '80px',
-                  height: '80px',
-                  background: colors.cardBackground,
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 24px',
-                }}>
-                  <SearchIcon size={32} style={{ color: colors.placeholder }} />
+              <Card variant="elevated" className="text-center p-15">
+                <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Icon name="search" size="lg" className="text-muted-foreground" />
                 </div>
-                <h3 style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  color: colors.text,
-                  marginBottom: '12px',
-                }}>
+                <h3 className="text-2xl font-bold text-foreground mb-3">
                   Ничего не найдено
                 </h3>
-                <p style={{
-                  color: colors.placeholder,
-                  marginBottom: '32px',
-                  fontSize: '16px',
-                  maxWidth: '400px',
-                  margin: '0 auto 32px',
-                  lineHeight: '1.5',
-                }}>
+                <p className="text-muted-foreground mb-8 text-base max-w-md mx-auto leading-relaxed">
                   Мы не смогли найти товары по запросу "{query}". 
                   Попробуйте изменить поисковый запрос или очистить фильтры.
                 </p>
-                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <div className="flex gap-3 justify-center flex-wrap">
                   <Button
                     variant="gradient"
                     onClick={() => {
@@ -618,18 +450,12 @@ function SearchPageContent() {
             {!loading && !error && products.length > 0 && (
               <>
                 {/* ✅ Оптимизированная сетка для поиска */}
-                <div 
-                  className="search-results-grid"
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: showFilters 
-                      ? 'repeat(auto-fill, minmax(240px, 1fr))' 
-                      : 'repeat(auto-fill, minmax(260px, 1fr))',
-                    gap: '20px',
-                    justifyItems: 'stretch',
-                    alignItems: 'start',
-                  }}
-                >
+                <div className={cn(
+                  "grid gap-5 justify-items-stretch",
+                  showFilters 
+                    ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
+                    : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+                )}>
                   {products.map((product) => (
                     <ProductCard
                       key={product.slug}
@@ -645,16 +471,8 @@ function SearchPageContent() {
 
                 {/* Загрузить еще */}
                 {products.length < totalResults && (
-                  <div style={{ 
-                    textAlign: 'center', 
-                    marginTop: '60px',
-                    padding: '40px 20px',
-                  }}>
-                    <p style={{
-                      color: colors.placeholder,
-                      marginBottom: '24px',
-                      fontSize: '16px',
-                    }}>
+                  <div className="text-center mt-15 p-10">
+                    <p className="text-muted-foreground mb-6 text-base">
                       Показано {products.length} из {totalResults} товаров
                     </p>
                     <Button
@@ -664,9 +482,7 @@ function SearchPageContent() {
                         // TODO: Загрузить следующую страницу
                         console.log('Загрузить еще товары');
                       }}
-                      style={{
-                        minWidth: '200px',
-                      }}
+                      className="min-w-[200px]"
                     >
                       Показать еще
                     </Button>
@@ -676,35 +492,14 @@ function SearchPageContent() {
             )}
 
             {!loading && !error && !query && products.length === 0 && (
-              <Card variant="elevated" style={{ textAlign: 'center', padding: '60px 40px' }}>
-                <div style={{
-                  width: '80px',
-                  height: '80px',
-                  background: 'var(--gradient-emerald)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 24px',
-                }}>
-                  <SearchIcon size={32} style={{ color: 'white' }} />
+              <Card variant="elevated" className="text-center p-15">
+                <div className="w-20 h-20 bg-gradient-emerald rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Icon name="search" size="lg" className="text-white" />
                 </div>
-                <h3 style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  color: colors.text,
-                  marginBottom: '12px',
-                }}>
+                <h3 className="text-2xl font-bold text-foreground mb-3">
                   Начните поиск
                 </h3>
-                <p style={{
-                  color: colors.placeholder,
-                  marginBottom: '32px',
-                  fontSize: '16px',
-                  maxWidth: '400px',
-                  margin: '0 auto 32px',
-                  lineHeight: '1.5',
-                }}>
+                <p className="text-muted-foreground mb-8 text-base max-w-md mx-auto leading-relaxed">
                   Введите название товара, бренда или категории в поисковую строку выше
                 </p>
                 <Button
@@ -718,58 +513,6 @@ function SearchPageContent() {
           </div>
         </div>
       </div>
-
-      {/* ✅ Адаптивные стили */}
-      <style jsx>{`
-        .search-results-grid {
-          width: 100%;
-          margin: 0 auto;
-        }
-
-        /* Мобильные устройства */
-        @media (max-width: 640px) {
-          .search-results-grid {
-            grid-template-columns: 1fr !important;
-            gap: 16px !important;
-            padding: 0 8px;
-          }
-        }
-
-        /* Планшеты */
-        @media (min-width: 641px) and (max-width: 1024px) {
-          .search-results-grid {
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
-            gap: 18px !important;
-          }
-        }
-
-        /* Средние экраны */
-        @media (min-width: 1025px) and (max-width: 1400px) {
-          .search-results-grid {
-            grid-template-columns: ${showFilters 
-              ? 'repeat(auto-fill, minmax(220px, 1fr))' 
-              : 'repeat(auto-fill, minmax(240px, 1fr))'
-            } !important;
-          }
-        }
-
-        /* Большие экраны */
-        @media (min-width: 1401px) {
-          .search-results-grid {
-            grid-template-columns: ${showFilters 
-              ? 'repeat(auto-fill, minmax(240px, 1fr))' 
-              : 'repeat(auto-fill, minmax(260px, 1fr))'
-            } !important;
-          }
-        }
-
-        /* Ограничиваем максимальную ширину карточек */
-        .search-results-grid > * {
-          max-width: 320px;
-          width: 100%;
-          margin: 0 auto;
-        }
-      `}</style>
     </div>
   );
 }
@@ -777,24 +520,10 @@ function SearchPageContent() {
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'var(--color-background)',
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div
-            className="animate-spin rounded-full h-16 w-16 border-4 border-t-transparent"
-            style={{ 
-              background: 'var(--gradient-emerald)',
-              WebkitMask: 'radial-gradient(circle at center, transparent 50%, black 51%)',
-              mask: 'radial-gradient(circle at center, transparent 50%, black 51%)',
-              margin: '0 auto 16px',
-            }}
-          />
-          <p style={{ color: 'var(--color-placeholder)', fontSize: '16px' }}>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-border border-t-primary mx-auto mb-4" />
+          <p className="text-muted-foreground text-base">
             Загрузка поиска...
           </p>
         </div>

@@ -3,14 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { useAppTheme } from '@/hooks/useTheme';
-
-const XIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M18 6L6 18"/>
-    <path d="M6 6l12 12"/>
-  </svg>
-);
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/utils';
 
 interface Filters {
   brands: string[];
@@ -46,7 +40,6 @@ export function SearchFilters({
   showMobileClose = false,
   availableOptions
 }: SearchFiltersProps) {
-  const { colors } = useAppTheme();
   const [localFilters, setLocalFilters] = useState<Filters>(filters);
   
   // Отдельное состояние для полей ввода цены (для лучшего UX)
@@ -202,29 +195,22 @@ export function SearchFilters({
       <div className="p-6">
         {/* Заголовок */}
         <div className="flex justify-between items-center mb-6">
-          <h3 
-            className="text-lg font-bold"
-            style={{ color: colors.text }}
-          >
+          <h3 className="text-lg font-bold text-foreground">
             Фильтры
           </h3>
           {showMobileClose && (
             <button
               onClick={onClose}
-              className="bg-transparent border-0 cursor-pointer p-1"
-              style={{ color: colors.placeholder }}
+              className="bg-transparent border-0 cursor-pointer p-1 text-muted-foreground hover:text-foreground transition-colors"
             >
-              <XIcon size={20} />
+              <Icon name="close" size="sm" />
             </button>
           )}
         </div>
 
         {/* Ценовой диапазон */}
         <div className="mb-6">
-          <h4 
-            className="text-base font-semibold mb-3"
-            style={{ color: colors.text }}
-          >
+          <h4 className="text-base font-semibold mb-3 text-foreground">
             Цена
           </h4>
           <div className="grid grid-cols-2 gap-3 mb-3">
@@ -233,24 +219,14 @@ export function SearchFilters({
               placeholder="От"
               value={priceInputs.min === options.priceRange.min.toString() ? '' : priceInputs.min}
               onChange={(e) => handleMinPriceChange(e.target.value)}
-              className="px-3 py-2 border rounded-lg text-sm outline-none"
-              style={{
-                borderColor: colors.border,
-                backgroundColor: colors.searchBackground,
-                color: colors.text,
-              }}
+              className="px-3 py-2 border border-border rounded-lg text-sm outline-none bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
             <input
               type="number"
               placeholder="До"
               value={priceInputs.max === options.priceRange.max.toString() ? '' : priceInputs.max}
               onChange={(e) => handleMaxPriceChange(e.target.value)}
-              className="px-3 py-2 border rounded-lg text-sm outline-none"
-              style={{
-                borderColor: colors.border,
-                backgroundColor: colors.searchBackground,
-                color: colors.text,
-              }}
+              className="px-3 py-2 border border-border rounded-lg text-sm outline-none bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
           </div>
           
@@ -262,29 +238,21 @@ export function SearchFilters({
               max={options.priceRange.max}
               value={localFilters.maxPrice}
               onChange={(e) => updateFilters({ maxPrice: parseInt(e.target.value) })}
-              className="w-full h-1.5 rounded-sm outline-none"
-              style={{
-                background: colors.border,
-                accentColor: colors.tint,
-              }}
+              className="w-full h-1.5 rounded-sm outline-none bg-border appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-none"
             />
           </div>
         </div>
 
         {/* Бренды */}
         <div className="mb-6">
-          <h4 
-            className="text-base font-semibold mb-3"
-            style={{ color: colors.text }}
-          >
+          <h4 className="text-base font-semibold mb-3 text-foreground">
             Бренды
           </h4>
           <div className="flex flex-col gap-2 max-h-[180px] overflow-y-auto">
             {options.brands.map(brand => (
               <label
                 key={brand.name}
-                className="flex items-center justify-between gap-2 cursor-pointer text-sm py-1"
-                style={{ color: colors.text }}
+                className="flex items-center justify-between gap-2 cursor-pointer text-sm py-1 text-foreground hover:text-primary transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <input
@@ -293,14 +261,11 @@ export function SearchFilters({
                     onChange={() => updateFilters({
                       brands: toggleArrayItem(localFilters.brands, brand.name)
                     })}
-                    style={{ accentColor: colors.tint }}
+                    className="w-4 h-4 text-primary bg-background border-border rounded focus:ring-primary focus:ring-2 accent-primary"
                   />
                   <span>{brand.name}</span>
                 </div>
-                <span 
-                  className="text-xs font-medium"
-                  style={{ color: colors.placeholder }}
-                >
+                <span className="text-xs font-medium text-muted-foreground">
                   {brand.count}
                 </span>
               </label>
@@ -310,18 +275,14 @@ export function SearchFilters({
 
         {/* Категории */}
         <div className="mb-6">
-          <h4 
-            className="text-base font-semibold mb-3"
-            style={{ color: colors.text }}
-          >
+          <h4 className="text-base font-semibold mb-3 text-foreground">
             Категории
           </h4>
           <div className="flex flex-col gap-2">
             {options.categories.slice(0, 5).map(category => (
               <label
                 key={category.name}
-                className="flex items-center justify-between gap-2 cursor-pointer text-sm py-1"
-                style={{ color: colors.text }}
+                className="flex items-center justify-between gap-2 cursor-pointer text-sm py-1 text-foreground hover:text-primary transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <input
@@ -330,14 +291,11 @@ export function SearchFilters({
                     onChange={() => updateFilters({
                       categories: toggleArrayItem(localFilters.categories, category.name)
                     })}
-                    style={{ accentColor: colors.tint }}
+                    className="w-4 h-4 text-primary bg-background border-border rounded focus:ring-primary focus:ring-2 accent-primary"
                   />
                   <span>{category.name}</span>
                 </div>
-                <span 
-                  className="text-xs font-medium"
-                  style={{ color: colors.placeholder }}
-                >
+                <span className="text-xs font-medium text-muted-foreground">
                   {category.count}
                 </span>
               </label>
@@ -347,10 +305,7 @@ export function SearchFilters({
 
         {/* Размеры */}
         <div className="mb-6">
-          <h4 
-            className="text-base font-semibold mb-3"
-            style={{ color: colors.text }}
-          >
+          <h4 className="text-base font-semibold mb-3 text-foreground">
             Размеры
           </h4>
           <div className="grid grid-cols-4 gap-2">
@@ -360,12 +315,12 @@ export function SearchFilters({
                 onClick={() => updateFilters({
                   sizes: toggleArrayItem(localFilters.sizes, sizeOption.size)
                 })}
-                className="px-1 py-2 border rounded-lg text-sm font-semibold cursor-pointer transition-all duration-200 text-center"
-                style={{
-                  borderColor: localFilters.sizes.includes(sizeOption.size) ? colors.tint : colors.border,
-                  backgroundColor: localFilters.sizes.includes(sizeOption.size) ? colors.tint : colors.card,
-                  color: localFilters.sizes.includes(sizeOption.size) ? 'white' : colors.text,
-                }}
+                className={cn(
+                  "px-1 py-2 border rounded-lg text-sm font-semibold cursor-pointer transition-all duration-200 text-center",
+                  localFilters.sizes.includes(sizeOption.size)
+                    ? "border-primary bg-primary text-white"
+                    : "border-border bg-card text-foreground hover:border-primary/50"
+                )}
               >
                 {sizeOption.size}
               </button>
@@ -375,18 +330,14 @@ export function SearchFilters({
 
         {/* Цвета */}
         <div className="mb-6">
-          <h4 
-            className="text-base font-semibold mb-3"
-            style={{ color: colors.text }}
-          >
+          <h4 className="text-base font-semibold mb-3 text-foreground">
             Цвета
           </h4>
           <div className="flex flex-col gap-2">
             {options.colors.slice(0, 6).map(colorOption => (
               <label
                 key={colorOption.name}
-                className="flex items-center justify-between gap-2 cursor-pointer text-sm py-1"
-                style={{ color: colors.text }}
+                className="flex items-center justify-between gap-2 cursor-pointer text-sm py-1 text-foreground hover:text-primary transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <input
@@ -395,14 +346,11 @@ export function SearchFilters({
                     onChange={() => updateFilters({
                       colors: toggleArrayItem(localFilters.colors, colorOption.name)
                     })}
-                    style={{ accentColor: colors.tint }}
+                    className="w-4 h-4 text-primary bg-background border-border rounded focus:ring-primary focus:ring-2 accent-primary"
                   />
                   <span>{colorOption.name}</span>
                 </div>
-                <span 
-                  className="text-xs font-medium"
-                  style={{ color: colors.placeholder }}
-                >
+                <span className="text-xs font-medium text-muted-foreground">
                   {colorOption.count}
                 </span>
               </label>
@@ -412,18 +360,14 @@ export function SearchFilters({
 
         {/* Пол */}
         <div className="mb-6">
-          <h4 
-            className="text-base font-semibold mb-3"
-            style={{ color: colors.text }}
-          >
+          <h4 className="text-base font-semibold mb-3 text-foreground">
             Для кого
           </h4>
           <div className="flex flex-col gap-2">
             {options.genders.map(gender => (
               <label
                 key={gender.name}
-                className="flex items-center justify-between gap-2 cursor-pointer text-sm py-1"
-                style={{ color: colors.text }}
+                className="flex items-center justify-between gap-2 cursor-pointer text-sm py-1 text-foreground hover:text-primary transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <input
@@ -432,14 +376,11 @@ export function SearchFilters({
                     onChange={() => updateFilters({
                       genders: toggleArrayItem(localFilters.genders, gender.name)
                     })}
-                    style={{ accentColor: colors.tint }}
+                    className="w-4 h-4 text-primary bg-background border-border rounded focus:ring-primary focus:ring-2 accent-primary"
                   />
                   <span>{gender.name}</span>
                 </div>
-                <span 
-                  className="text-xs font-medium"
-                  style={{ color: colors.placeholder }}
-                >
+                <span className="text-xs font-medium text-muted-foreground">
                   {gender.count}
                 </span>
               </label>
@@ -453,24 +394,13 @@ export function SearchFilters({
             variant="outline"
             onClick={clearAllFilters}
             disabled={!hasActiveFilters()}
-            className="w-full"
-            style={{
-              borderColor: colors.border,
-              color: colors.text,
-              opacity: hasActiveFilters() ? 1 : 0.5,
-            }}
+            className="w-full disabled:opacity-50"
           >
             Сбросить фильтры
           </Button>
           
           {hasActiveFilters() && (
-            <div 
-              className="px-3 py-2 rounded-lg text-center text-xs"
-              style={{
-                backgroundColor: colors.cardBackground,
-                color: colors.placeholder,
-              }}
-            >
+            <div className="px-3 py-2 rounded-lg text-center text-xs bg-muted text-muted-foreground">
               Активных фильтров: {
                 localFilters.brands.length + 
                 localFilters.categories.length + 
