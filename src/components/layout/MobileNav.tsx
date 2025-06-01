@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAppTheme } from '@/hooks/useTheme';
+import { cn } from '@/lib/utils';
 
 // Иконки для мобильной навигации
 const HomeIcon = ({ size = 24 }: { size?: number }) => (
@@ -90,7 +90,6 @@ interface MobileNavProps {
 }
 
 export function MobileNav({ cartCount = 0, favoritesCount = 0 }: MobileNavProps) {
-  const { colors, isDark } = useAppTheme();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -117,36 +116,11 @@ export function MobileNav({ cartCount = 0, favoritesCount = 0 }: MobileNavProps)
   return (
     <>
       {/* Отступ для фиксированной навигации */}
-      <div style={{ height: '80px' }} className="block sm:hidden" />
+      <div className="h-20 block sm:hidden" />
       
       {/* Мобильная навигация */}
-      <nav 
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: 50,
-          background: isDark 
-            ? 'rgba(15, 23, 42, 0.95)' 
-            : 'rgba(248, 250, 252, 0.95)',
-          backdropFilter: 'blur(16px)',
-          borderTop: `1px solid ${colors.border}`,
-          boxShadow: isDark 
-            ? '0 -8px 32px rgba(0, 0, 0, 0.4)' 
-            : '0 -8px 32px rgba(0, 0, 0, 0.1)',
-          padding: '8px 0 8px',
-        }}
-        className="block sm:hidden"
-      >
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          alignItems: 'center',
-          maxWidth: '480px',
-          margin: '0 auto',
-          padding: '0 12px',
-        }}>
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-border shadow-2xl dark:shadow-black/40 p-2 block sm:hidden">
+        <div className="flex justify-around items-center max-w-[480px] mx-auto px-3">
           {mobileNavItems.map((item) => {
             const active = isActive(item.href);
             const badgeCount = getBadgeCount(item.badge);
@@ -155,104 +129,38 @@ export function MobileNav({ cartCount = 0, favoritesCount = 0 }: MobileNavProps)
               <Link
                 key={item.name}
                 href={item.href}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '4px',
-                  padding: '8px 12px',
-                  borderRadius: '16px',
-                  textDecoration: 'none',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  position: 'relative',
-                  background: active 
-                    ? isDark 
-                      ? 'rgba(16, 185, 129, 0.15)' 
-                      : 'rgba(16, 185, 129, 0.1)'
-                    : 'transparent',
-                  minWidth: '60px',
-                }}
-                onTouchStart={(e) => {
-                  if (!active) {
-                    e.currentTarget.style.background = colors.cardBackground;
-                    e.currentTarget.style.transform = 'scale(0.95)';
-                  }
-                }}
-                onTouchEnd={(e) => {
-                  if (!active) {
-                    setTimeout(() => {
-                      e.currentTarget.style.background = 'transparent';
-                      e.currentTarget.style.transform = 'scale(1)';
-                    }, 150);
-                  }
-                }}
+                className={cn(
+                  "flex flex-col items-center gap-1 p-2 px-3 rounded-2xl no-underline transition-all duration-300 relative min-w-[60px]",
+                  active 
+                    ? "bg-primary/15 text-primary" 
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground active:scale-95"
+                )}
               >
                 {/* Иконка с индикатором активности */}
-                <div style={{
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '28px',
-                  height: '28px',
-                }}>
+                <div className="relative flex items-center justify-center w-7 h-7">
                   <item.icon 
                     size={24} 
-                    style={{ 
-                      color: active ? colors.tint : colors.placeholder,
-                      transition: 'color 0.2s ease',
-                    }} 
+                    className="transition-colors duration-200" 
                   />
                   
                   {/* Бейдж с количеством */}
                   {badgeCount > 0 && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '-6px',
-                      right: '-6px',
-                      minWidth: '18px',
-                      height: '18px',
-                      background: colors.error,
-                      borderRadius: '9px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '10px',
-                      fontWeight: '700',
-                      color: 'white',
-                      padding: '0 4px',
-                      border: `2px solid ${colors.card}`,
-                    }}>
+                    <div className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] bg-destructive border-2 border-background rounded-full flex items-center justify-center text-[10px] font-bold text-destructive-foreground px-1">
                       {badgeCount > 99 ? '99+' : badgeCount}
                     </div>
                   )}
                   
                   {/* Индикатор активности */}
                   {active && (
-                    <div style={{
-                      position: 'absolute',
-                      bottom: '-12px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      width: '4px',
-                      height: '4px',
-                      background: colors.tint,
-                      borderRadius: '2px',
-                      animation: 'pulse 2s infinite',
-                    }} />
+                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full animate-pulse" />
                   )}
                 </div>
                 
                 {/* Название */}
-                <span style={{
-                  fontSize: '11px',
-                  fontWeight: active ? '700' : '500',
-                  color: active ? colors.tint : colors.placeholder,
-                  transition: 'all 0.2s ease',
-                  letterSpacing: '0.2px',
-                  textAlign: 'center',
-                  lineHeight: '1.2',
-                }}>
+                <span className={cn(
+                  "text-[11px] font-medium transition-all duration-200 tracking-wide text-center leading-tight",
+                  active ? "font-bold" : "font-medium"
+                )}>
                   {item.name}
                 </span>
               </Link>
@@ -262,132 +170,43 @@ export function MobileNav({ cartCount = 0, favoritesCount = 0 }: MobileNavProps)
           {/* Отдельная кнопка корзины с особым дизайном */}
           <button
             onClick={() => router.push('/cart')}
-            style={{
-              position: 'relative',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              padding: '8px 12px',
-              borderRadius: '16px',
-              border: 'none',
-              background: pathname === '/cart' 
-                ? 'var(--gradient-emerald)'
-                : colors.cardBackground,
-              cursor: 'pointer',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              minWidth: '60px',
-              boxShadow: pathname === '/cart' 
-                ? 'var(--shadow-emerald)' 
-                : 'none',
-            }}
-            onTouchStart={(e) => {
-              if (pathname !== '/cart') {
-                e.currentTarget.style.background = colors.tint;
-                e.currentTarget.style.transform = 'scale(0.95)';
-                e.currentTarget.style.color = 'white';
-              }
-            }}
-            onTouchEnd={(e) => {
-              if (pathname !== '/cart') {
-                setTimeout(() => {
-                  e.currentTarget.style.background = colors.cardBackground;
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.color = colors.placeholder;
-                }, 150);
-              }
-            }}
+            className={cn(
+              "relative flex flex-col items-center gap-1 p-2 px-3 rounded-2xl border-0 cursor-pointer transition-all duration-300 min-w-[60px]",
+              pathname === '/cart' 
+                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30"
+                : "bg-muted text-foreground hover:bg-primary hover:text-primary-foreground active:scale-95"
+            )}
           >
             {/* Иконка корзины */}
-            <div style={{
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '28px',
-              height: '28px',
-            }}>
+            <div className="relative flex items-center justify-center w-7 h-7">
               <ShoppingBagIcon 
                 size={24} 
-                style={{ 
-                  color: pathname === '/cart' ? 'white' : colors.placeholder,
-                  transition: 'color 0.2s ease',
-                }} 
+                className="transition-colors duration-200"
               />
               
               {/* Бейдж корзины */}
               {cartCount > 0 && (
-                <div style={{
-                  position: 'absolute',
-                  top: '-6px',
-                  right: '-6px',
-                  minWidth: '18px',
-                  height: '18px',
-                  background: pathname === '/cart' ? 'white' : colors.tint,
-                  borderRadius: '9px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '10px',
-                  fontWeight: '700',
-                  color: pathname === '/cart' ? colors.tint : 'white',
-                  padding: '0 4px',
-                  border: `2px solid ${colors.card}`,
-                  animation: cartCount > 0 ? 'bounce 0.6s ease' : 'none',
-                }}>
+                <div className={cn(
+                  "absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] border-2 border-background rounded-full flex items-center justify-center text-[10px] font-bold px-1 animate-bounce",
+                  pathname === '/cart' 
+                    ? "bg-white text-primary" 
+                    : "bg-primary text-primary-foreground"
+                )}>
                   {cartCount > 99 ? '99+' : cartCount}
                 </div>
               )}
             </div>
             
             {/* Название */}
-            <span style={{
-              fontSize: '11px',
-              fontWeight: pathname === '/cart' ? '700' : '500',
-              color: pathname === '/cart' ? 'white' : colors.placeholder,
-              transition: 'all 0.2s ease',
-              letterSpacing: '0.2px',
-              textAlign: 'center',
-              lineHeight: '1.2',
-            }}>
+            <span className={cn(
+              "text-[11px] font-medium transition-all duration-200 tracking-wide text-center leading-tight",
+              pathname === '/cart' ? "font-bold" : "font-medium"
+            )}>
               Корзина
             </span>
           </button>
         </div>
       </nav>
-
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.5;
-          }
-        }
-
-        @keyframes bounce {
-          0%, 20%, 53%, 80%, 100% {
-            transform: translate3d(0, 0, 0);
-          }
-          40%, 43% {
-            transform: translate3d(0, -8px, 0);
-          }
-          70% {
-            transform: translate3d(0, -4px, 0);
-          }
-          90% {
-            transform: translate3d(0, -2px, 0);
-          }
-        }
-
-        /* Скрываем мобильную навигацию на больших экранах */
-        @media (min-width: 640px) {
-          nav {
-            display: none !important;
-          }
-        }
-      `}</style>
     </>
   );
 }

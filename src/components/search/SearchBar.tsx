@@ -2,10 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppTheme } from '@/hooks/useTheme';
 import { useDebounce } from '@/hooks/useDebounce';
+import { cn } from '@/lib/utils';
 
-// Иконки
 const SearchIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <circle cx="11" cy="11" r="8"/>
@@ -59,7 +58,6 @@ export function SearchBar({
   showSuggestions = true,
   className = '',
 }: SearchBarProps) {
-  const { colors, isDark } = useAppTheme();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -270,106 +268,33 @@ export function SearchBar({
   const getSuggestionIcon = (type: string) => {
     switch (type) {
       case 'recent':
-        return <ClockIcon size={16} style={{ color: colors.placeholder }} />;
+        return <ClockIcon size={16} className="text-muted-foreground" />;
       case 'trending':
-        return <TrendingUpIcon size={16} style={{ color: colors.tint }} />;
+        return <TrendingUpIcon size={16} className="text-primary" />;
       default:
-        return <SearchIcon size={16} style={{ color: colors.placeholder }} />;
+        return <SearchIcon size={16} className="text-muted-foreground" />;
     }
   };
 
   // Стили в зависимости от варианта
   const getContainerStyles = () => {
-    const baseStyles = {
-      position: 'relative' as const,
-      width: '100%',
-      zIndex: variant === 'hero' ? 1000 : 10, // ✅ Высокий z-index для hero
-    };
-
+    const baseClasses = "relative w-full";
+    
     switch (variant) {
       case 'hero':
-        return { ...baseStyles, maxWidth: '600px' };
+        return cn(baseClasses, "max-w-2xl z-50");
       case 'mobile':
-        return { ...baseStyles, maxWidth: '100%' };
+        return cn(baseClasses, "max-w-full");
       default:
-        return { ...baseStyles, maxWidth: '400px' };
+        return cn(baseClasses, "max-w-md");
     }
-  };
-
-  const getInputStyles = () => {
-    const baseStyles = {
-      width: '100%',
-      border: `2px solid ${isOpen ? colors.tint : 'transparent'}`,
-      fontSize: variant === 'hero' ? '16px' : '15px',
-      fontWeight: '500',
-      color: variant === 'hero' ? '#ffffff' : colors.text,
-      outline: 'none',
-      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    };
-
-    if (variant === 'hero') {
-      return {
-        ...baseStyles,
-        background: 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(16px)',
-        borderRadius: '50px',
-        padding: '20px 60px 20px 32px',
-        border: `1px solid rgba(255, 255, 255, 0.2)`,
-        '::placeholder': {
-          color: 'rgba(255, 255, 255, 0.7)',
-        }
-      };
-    } else {
-      return {
-        ...baseStyles,
-        background: colors.searchBackground,
-        borderRadius: '20px',
-        padding: '14px 48px 14px 20px',
-        '::placeholder': {
-          color: colors.placeholder,
-        }
-      };
-    }
-  };
-
-  const getButtonStyles = () => {
-    const size = variant === 'hero' ? '48px' : '36px';
-    const iconSize = variant === 'hero' ? 20 : 18;
-
-    return {
-      position: 'absolute' as const,
-      right: variant === 'hero' ? '8px' : '6px',
-      top: '50%',
-      transform: 'translateY(-50%)',
-      width: size,
-      height: size,
-      background: colors.tint,
-      border: 'none',
-      borderRadius: '50%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-      iconSize,
-    };
   };
 
   return (
-    <div style={getContainerStyles()} className={className}>
+    <div className={cn(getContainerStyles(), className)}>
       {/* Стеклянная обертка для hero варианта */}
       {variant === 'hero' ? (
-        <div className="glass" style={{
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          borderRadius: '60px',
-          padding: '8px',
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1)',
-        }}>
+        <div className="glass relative flex items-center rounded-[60px] p-2 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl">
           <input
             ref={inputRef}
             type="text"
@@ -377,57 +302,19 @@ export function SearchBar({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsOpen(true)}
-            style={{
-              flex: 1,
-              padding: '20px 32px',
-              border: 'none',
-              background: 'transparent',
-              fontSize: '16px',
-              color: '#ffffff',
-              outline: 'none',
-              fontWeight: '500',
-              '::placeholder': {
-                color: 'rgba(255, 255, 255, 0.7)',
-              }
-            }}
+            className="flex-1 px-8 py-5 border-0 bg-transparent text-base text-white outline-none font-medium placeholder:text-white/70"
           />
           
           <button
             onClick={handleSearch}
-            style={{
-              borderRadius: '50px',
-              minWidth: '140px',
-              padding: '16px 32px',
-              background: 'var(--gradient-button)',
-              border: 'none',
-              color: 'white',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              boxShadow: 'var(--shadow-emerald)',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--gradient-button-hover)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = 'var(--shadow-emerald-lg)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'var(--gradient-button)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'var(--shadow-emerald)';
-            }}
+            className="rounded-full min-w-[140px] px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 border-0 text-white text-base font-semibold cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:from-emerald-600 hover:to-emerald-700 hover:-translate-y-0.5 hover:shadow-xl"
           >
-            <SearchIcon size={20} style={{ color: 'white' }} />
+            <SearchIcon size={20} className="text-white" />
             Найти
           </button>
         </div>
       ) : (
-        <div style={{ position: 'relative' }}>
+        <div className="relative">
           <input
             ref={inputRef}
             type="text"
@@ -435,22 +322,18 @@ export function SearchBar({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsOpen(true)}
-            style={getInputStyles()}
+            className={cn(
+              "w-full border-2 border-transparent text-[15px] font-medium text-foreground outline-none transition-all duration-300 focus:border-primary",
+              variant === 'default' && "bg-muted rounded-[20px] px-5 py-3.5 pr-12 placeholder:text-muted-foreground",
+              isOpen && "border-primary"
+            )}
           />
           
           <button
             onClick={handleSearch}
-            style={getButtonStyles()}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
-              e.currentTarget.style.boxShadow = 'var(--shadow-emerald)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 bg-primary border-0 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-lg hover:shadow-primary/30"
           >
-            <SearchIcon size={getButtonStyles().iconSize} style={{ color: 'white' }} />
+            <SearchIcon size={18} className="text-primary-foreground" />
           </button>
         </div>
       )}
@@ -459,44 +342,16 @@ export function SearchBar({
       {isOpen && showSuggestions && (
         <div
           ref={dropdownRef}
-          style={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            right: 0,
-            background: colors.card,
-            border: `1px solid ${colors.border}`,
-            borderRadius: '16px',
-            boxShadow: isDark 
-              ? '0 20px 40px rgba(0, 0, 0, 0.4)' 
-              : '0 20px 40px rgba(0, 0, 0, 0.1)',
-            marginTop: '8px',
-            padding: '12px',
-            zIndex: 9999, // ✅ Очень высокий z-index для hero-варианта
-            maxHeight: '400px',
-            overflowY: 'auto',
-          }}
+          className="absolute top-full left-0 right-0 bg-card border border-border rounded-2xl shadow-2xl dark:shadow-black/40 mt-2 p-3 z-[9999] max-h-96 overflow-y-auto"
         >
           {loading && (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '20px',
-            }}>
-              <div
-                className="animate-spin rounded-full h-6 w-6 border-2 border-t-transparent"
-                style={{ borderColor: `${colors.tint} transparent ${colors.tint} ${colors.tint}` }}
-              />
+            <div className="flex items-center justify-center py-5">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent" />
             </div>
           )}
 
           {!loading && suggestions.length === 0 && query.length >= 2 && (
-            <div style={{
-              padding: '20px',
-              textAlign: 'center',
-              color: colors.placeholder,
-            }}>
+            <div className="py-5 text-center text-muted-foreground">
               Ничего не найдено
             </div>
           )}
@@ -505,15 +360,7 @@ export function SearchBar({
             <>
               {/* Заголовки секций */}
               {query.length === 0 && recentSearches.length > 0 && (
-                <div style={{
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  color: colors.placeholder,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                  padding: '8px 16px 8px 16px',
-                  marginBottom: '4px',
-                }}>
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide px-4 py-2 mb-1">
                   Недавние поиски
                 </div>
               )}
@@ -522,67 +369,32 @@ export function SearchBar({
                 <div
                   key={suggestion.id}
                   onClick={() => handleSuggestionClick(suggestion)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '12px 16px',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    background: selectedIndex === index ? colors.cardBackground : 'transparent',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.cardBackground;
-                    setSelectedIndex(index);
-                  }}
-                  onMouseLeave={(e) => {
-                    if (selectedIndex !== index) {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }
-                  }}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200",
+                    selectedIndex === index ? "bg-muted" : "hover:bg-muted"
+                  )}
+                  onMouseEnter={() => setSelectedIndex(index)}
                 >
                   {/* Изображение товара или иконка */}
                   {suggestion.image ? (
                     <img
                       src={suggestion.image}
                       alt={suggestion.text}
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '8px',
-                        objectFit: 'cover',
-                      }}
+                      className="w-8 h-8 rounded-lg object-cover"
                     />
                   ) : (
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      background: colors.cardBackground,
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
+                    <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
                       {getSuggestionIcon(suggestion.type)}
                     </div>
                   )}
 
                   {/* Текст предложения */}
-                  <div style={{ flex: 1 }}>
-                    <div style={{
-                      fontSize: '15px',
-                      fontWeight: '600',
-                      color: colors.text,
-                    }}>
+                  <div className="flex-1">
+                    <div className="text-[15px] font-semibold text-foreground">
                       {suggestion.text}
                     </div>
                     {suggestion.count && (
-                      <div style={{
-                        fontSize: '12px',
-                        color: colors.placeholder,
-                        marginTop: '2px',
-                      }}>
+                      <div className="text-xs text-muted-foreground mt-0.5">
                         {suggestion.count} товаров
                       </div>
                     )}
@@ -595,27 +407,7 @@ export function SearchBar({
                         e.stopPropagation();
                         removeRecentSearch(suggestion.text);
                       }}
-                      style={{
-                        width: '24px',
-                        height: '24px',
-                        background: 'transparent',
-                        border: 'none',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        color: colors.placeholder,
-                        transition: 'all 0.2s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.border;
-                        e.currentTarget.style.color = colors.text;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.placeholder;
-                      }}
+                      className="w-6 h-6 bg-transparent border-0 rounded-full flex items-center justify-center cursor-pointer text-muted-foreground transition-all duration-200 hover:bg-border hover:text-foreground"
                     >
                       <XIcon size={14} />
                     </button>
@@ -627,25 +419,7 @@ export function SearchBar({
               {query.length >= 2 && (
                 <div
                   onClick={() => router.push(`/search?q=${encodeURIComponent(query)}`)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '12px 16px',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    marginTop: '8px',
-                    borderTop: `1px solid ${colors.border}`,
-                    color: colors.tint,
-                    fontWeight: '600',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.cardBackground;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 mt-2 border-t border-border text-primary font-semibold hover:bg-muted"
                 >
                   <SearchIcon size={16} />
                   Показать все результаты для "{query}"

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useAppTheme } from '@/hooks/useTheme';
+import { cn } from '@/lib/utils';
 
 // Иконки для социальных сетей и контактов
 const InstagramIcon = ({ size = 20 }: { size?: number }) => (
@@ -181,65 +181,22 @@ const advantages = [
 ];
 
 export function Footer() {
-  const { colors, isDark } = useAppTheme();
-
   return (
-    <footer style={{
-      background: isDark 
-        ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
-        : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-      borderTop: `1px solid ${colors.border}`,
-      marginTop: '80px',
-    }}>
+    <footer className="bg-gradient-to-br from-background to-muted/50 border-t border-border mt-20">
       {/* Преимущества */}
-      <div style={{
-        borderBottom: `1px solid ${colors.border}`,
-        padding: '40px 0',
-      }}>
-        <div style={{
-          maxWidth: '1600px',
-          margin: '0 auto',
-          padding: '0 20px',
-        }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '32px',
-            textAlign: 'center',
-          }}>
+      <div className="border-b border-border py-10">
+        <div className="max-w-[1600px] mx-auto px-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             {advantages.map((advantage, index) => (
-              <div key={index} style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '16px',
-              }}>
-                <div style={{
-                  width: '64px',
-                  height: '64px',
-                  background: 'var(--gradient-emerald)',
-                  borderRadius: '20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: 'var(--shadow-emerald)',
-                }}>
-                  <advantage.icon size={28} style={{ color: 'white' }} />
+              <div key={index} className="flex flex-col items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-[20px] flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                  <advantage.icon size={28} className="text-white" />
                 </div>
                 <div>
-                  <h3 style={{
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    color: colors.text,
-                    marginBottom: '8px',
-                  }}>
+                  <h3 className="text-lg font-bold text-foreground mb-2 tracking-tight">
                     {advantage.title}
                   </h3>
-                  <p style={{
-                    fontSize: '14px',
-                    color: colors.placeholder,
-                    fontWeight: '500',
-                  }}>
+                  <p className="text-sm text-muted-foreground font-medium">
                     {advantage.description}
                   </p>
                 </div>
@@ -250,72 +207,30 @@ export function Footer() {
       </div>
 
       {/* Основной контент футера */}
-      <div style={{
-        maxWidth: '1600px',
-        margin: '0 auto',
-        padding: '60px 20px 40px',
-      }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '40px',
-          marginBottom: '50px',
-        }}>
+      <div className="max-w-[1600px] mx-auto px-5 py-15">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 mb-12">
           
           {/* Информация о компании */}
-          <div style={{ maxWidth: '400px' }}>
+          <div className="lg:col-span-2 max-w-md">
             {/* Логотип */}
             <Link 
               href="/" 
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                textDecoration: 'none',
-                marginBottom: '24px',
-              }}
+              className="flex items-center gap-3 mb-6 no-underline group"
             >
-              <div style={{
-                width: '48px',
-                height: '48px',
-                background: 'var(--gradient-emerald)',
-                borderRadius: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: 'var(--shadow-emerald)',
-              }}>
-                <DiamondIcon size={24} style={{ color: 'white' }} />
+              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform duration-200 group-hover:scale-110">
+                <DiamondIcon size={24} className="text-white" />
               </div>
               <div>
-                <div style={{
-                  fontSize: '28px',
-                  fontWeight: '800',
-                  color: colors.text,
-                  lineHeight: '1',
-                  letterSpacing: '-0.02em',
-                }}>
+                <div className="text-3xl font-extrabold text-foreground leading-none tracking-tight">
                   STORE
                 </div>
-                <div style={{
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  color: colors.placeholder,
-                  letterSpacing: '2px',
-                  textTransform: 'uppercase',
-                }}>
+                <div className="text-xs font-semibold text-muted-foreground tracking-[2px] uppercase">
                   Premium
                 </div>
               </div>
             </Link>
 
-            <p style={{
-              fontSize: '16px',
-              lineHeight: '1.6',
-              color: colors.placeholder,
-              marginBottom: '32px',
-              fontWeight: '400',
-            }}>
+            <p className="text-base leading-relaxed text-muted-foreground mb-8 font-normal">
               Премиальный интернет-магазин одежды и обуви. 
               Мы предлагаем только оригинальные товары от ведущих мировых брендов 
               с гарантией качества и быстрой доставкой.
@@ -323,49 +238,17 @@ export function Footer() {
 
             {/* Социальные сети */}
             <div>
-              <h4 style={{
-                fontSize: '16px',
-                fontWeight: '700',
-                color: colors.text,
-                marginBottom: '16px',
-              }}>
+              <h4 className="text-base font-bold text-foreground mb-4">
                 Мы в социальных сетях
               </h4>
-              <div style={{
-                display: 'flex',
-                gap: '12px',
-              }}>
+              <div className="flex gap-3">
                 {socialLinks.map((social) => (
                   <a
                     key={social.name}
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{
-                      width: '48px',
-                      height: '48px',
-                      background: colors.cardBackground,
-                      borderRadius: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: colors.text,
-                      textDecoration: 'none',
-                      transition: 'all 0.3s ease',
-                      border: `1px solid ${colors.border}`,
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'var(--gradient-emerald)';
-                      e.currentTarget.style.color = 'white';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = 'var(--shadow-emerald)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = colors.cardBackground;
-                      e.currentTarget.style.color = colors.text;
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
+                    className="w-12 h-12 bg-muted border border-border rounded-xl flex items-center justify-center text-foreground no-underline transition-all duration-300 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-emerald-600 hover:text-white hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/30"
                   >
                     <social.icon size={22} />
                   </a>
@@ -377,38 +260,15 @@ export function Footer() {
           {/* Навигационные секции */}
           {Object.entries(footerSections).map(([key, section]) => (
             <div key={key}>
-              <h4 style={{
-                fontSize: '18px',
-                fontWeight: '700',
-                color: colors.text,
-                marginBottom: '20px',
-                letterSpacing: '-0.01em',
-              }}>
+              <h4 className="text-lg font-bold text-foreground mb-5 tracking-tight">
                 {section.title}
               </h4>
-              <nav>
+              <nav className="space-y-2">
                 {section.links.map((link) => (
                   <Link
                     key={link.name}
                     href={link.href}
-                    style={{
-                      display: 'block',
-                      padding: '8px 0',
-                      fontSize: '15px',
-                      fontWeight: '500',
-                      color: colors.placeholder,
-                      textDecoration: 'none',
-                      transition: 'all 0.2s ease',
-                      borderRadius: '6px',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = colors.tint;
-                      e.currentTarget.style.paddingLeft = '8px';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = colors.placeholder;
-                      e.currentTarget.style.paddingLeft = '0';
-                    }}
+                    className="block py-2 text-[15px] font-medium text-muted-foreground no-underline transition-all duration-200 hover:text-primary hover:pl-2 rounded-md"
                   >
                     {link.name}
                   </Link>
@@ -419,71 +279,28 @@ export function Footer() {
 
           {/* Контактная информация */}
           <div>
-            <h4 style={{
-              fontSize: '18px',
-              fontWeight: '700',
-              color: colors.text,
-              marginBottom: '20px',
-              letterSpacing: '-0.01em',
-            }}>
+            <h4 className="text-lg font-bold text-foreground mb-5 tracking-tight">
               Контакты
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="space-y-4">
               {contactInfo.map((contact, index) => (
-                <div key={index} style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '12px',
-                }}>
-                  <div style={{
-                    width: '40px',
-                    height: '40px',
-                    background: colors.cardBackground,
-                    borderRadius: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    border: `1px solid ${colors.border}`,
-                  }}>
-                    <contact.icon size={18} style={{ color: colors.tint }} />
+                <div key={index} className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-muted border border-border rounded-lg flex items-center justify-center flex-shrink-0">
+                    <contact.icon size={18} className="text-primary" />
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      color: colors.placeholder,
-                      marginBottom: '4px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
                       {contact.title}
                     </div>
                     {contact.link ? (
                       <a
                         href={contact.link}
-                        style={{
-                          fontSize: '15px',
-                          fontWeight: '600',
-                          color: colors.text,
-                          textDecoration: 'none',
-                          transition: 'color 0.2s ease',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.color = colors.tint;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.color = colors.text;
-                        }}
+                        className="text-[15px] font-semibold text-foreground no-underline transition-colors duration-200 hover:text-primary"
                       >
                         {contact.content}
                       </a>
                     ) : (
-                      <div style={{
-                        fontSize: '15px',
-                        fontWeight: '600',
-                        color: colors.text,
-                      }}>
+                      <div className="text-[15px] font-semibold text-foreground">
                         {contact.content}
                       </div>
                     )}
@@ -495,143 +312,42 @@ export function Footer() {
         </div>
 
         {/* Подвал */}
-        <div style={{
-          paddingTop: '40px',
-          borderTop: `1px solid ${colors.border}`,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '20px',
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '24px',
-              flexWrap: 'wrap',
-            }}>
-              <p style={{
-                fontSize: '14px',
-                color: colors.placeholder,
-                margin: 0,
-                fontWeight: '500',
-              }}>
+        <div className="pt-10 border-t border-border">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-5">
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <p className="text-sm text-muted-foreground font-medium">
                 © 2024 Store Premium. Все права защищены.
               </p>
-              <div style={{
-                display: 'flex',
-                gap: '20px',
-                flexWrap: 'wrap',
-              }}>
+              <div className="flex flex-wrap gap-5">
                 <Link
                   href="/privacy"
-                  style={{
-                    fontSize: '14px',
-                    color: colors.placeholder,
-                    textDecoration: 'none',
-                    fontWeight: '500',
-                    transition: 'color 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = colors.tint;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = colors.placeholder;
-                  }}
+                  className="text-sm text-muted-foreground font-medium no-underline transition-colors duration-200 hover:text-primary"
                 >
                   Политика конфиденциальности
                 </Link>
                 <Link
                   href="/terms"
-                  style={{
-                    fontSize: '14px',
-                    color: colors.placeholder,
-                    textDecoration: 'none',
-                    fontWeight: '500',
-                    transition: 'color 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = colors.tint;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = colors.placeholder;
-                  }}
+                  className="text-sm text-muted-foreground font-medium no-underline transition-colors duration-200 hover:text-primary"
                 >
                   Пользовательское соглашение
                 </Link>
               </div>
             </div>
             
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
-              <span style={{
-                fontSize: '14px',
-                color: colors.placeholder,
-                fontWeight: '500',
-              }}>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground font-medium">
                 Создано с
               </span>
-              <div style={{
-                width: '20px',
-                height: '20px',
-                background: 'var(--gradient-emerald)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                animation: 'pulse 2s infinite',
-              }}>
-                <DiamondIcon size={10} style={{ color: 'white' }} />
+              <div className="w-5 h-5 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center animate-pulse">
+                <DiamondIcon size={10} className="text-white" />
               </div>
-              <span style={{
-                fontSize: '14px',
-                color: colors.tint,
-                fontWeight: '600',
-              }}>
+              <span className="text-sm text-primary font-semibold">
                 для вас
               </span>
             </div>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-          50% {
-            transform: scale(1.1);
-            opacity: 0.8;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .footer-grid {
-            grid-template-columns: 1fr !important;
-            gap: 32px !important;
-          }
-          
-          .footer-bottom {
-            flex-direction: column !important;
-            text-align: center !important;
-            gap: 16px !important;
-          }
-          
-          .footer-links {
-            justify-content: center !important;
-          }
-        }
-      `}</style>
     </footer>
   );
 }
