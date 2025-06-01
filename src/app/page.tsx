@@ -179,7 +179,7 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-theme-background">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 bg-gradient-emerald mb-6 mx-auto"
                style={{ 
@@ -187,10 +187,10 @@ export default function HomePage() {
                  mask: 'radial-gradient(circle at center, transparent 50%, black 51%)',
                }} 
           />
-          <div className="w-50 h-1 bg-border-light dark:bg-border-dark rounded overflow-hidden mx-auto mb-4">
-            <div className="h-full bg-gradient-emerald rounded loading-progress" />
+          <div className="w-50 h-1 bg-border rounded overflow-hidden mx-auto mb-4">
+            <div className="h-full bg-gradient-emerald rounded animate-loading-progress" />
           </div>
-          <p className="text-theme-secondary text-base font-medium">
+          <p className="text-muted-foreground text-base font-medium">
             Загружаем коллекцию...
           </p>
         </div>
@@ -200,16 +200,16 @@ export default function HomePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-theme-background p-5">
+      <div className="min-h-screen flex items-center justify-center bg-background p-5">
         <Card variant="elevated" className="text-center max-w-md">
           <div className="mb-6">
-            <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 opacity-80">
+            <div className="w-16 h-16 bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center mx-auto mb-4 opacity-80">
               <span className="text-2xl">⚠️</span>
             </div>
-            <h2 className="text-theme-primary text-xl font-semibold mb-2">
+            <h2 className="text-foreground text-xl font-semibold mb-2">
               Ошибка загрузки
             </h2>
-            <p className="text-theme-secondary mb-6 leading-relaxed">
+            <p className="text-muted-foreground mb-6 leading-relaxed">
               {error}
             </p>
           </div>
@@ -222,21 +222,15 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-theme-background">
+    <div className="min-h-screen bg-background">
       {/* Премиальный героический баннер */}
-      <section className="hero-gradient relative overflow-visible z-10 py-25 px-5 lg:py-30">
+      <section className="bg-gradient-hero relative overflow-visible z-10 py-25 px-5 lg:py-30">
         {/* Декоративные элементы с анимацией */}
         <div className="animate-float absolute top-[15%] left-[8%] w-30 h-30 bg-emerald-500/10 rounded-full border border-emerald-500/20" />
-        <div className="animate-float absolute top-1/2 right-[10%] w-20 h-20 bg-emerald-500/15 border border-emerald-400/20"
-             style={{ 
-               borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%',
-               animationDelay: '2s'
-             }} />
-        <div className="animate-float absolute bottom-[20%] left-[15%] w-15 h-15 bg-emerald-800/20 border border-emerald-600/20"
-             style={{ 
-               borderRadius: '40% 60% 60% 40% / 60% 30% 70% 40%',
-               animationDelay: '4s'
-             }} />
+        <div className="animate-float absolute top-1/2 right-[10%] w-20 h-20 bg-emerald-500/15 border border-emerald-400/20 delay-[2s]"
+             style={{ borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }} />
+        <div className="animate-float absolute bottom-[20%] left-[15%] w-15 h-15 bg-emerald-800/20 border border-emerald-600/20 delay-[4s]"
+             style={{ borderRadius: '40% 60% 60% 40% / 60% 30% 70% 40%' }} />
 
         <div className="max-w-screen-xl mx-auto relative z-10">
           {/* Премиальный бейдж */}
@@ -252,7 +246,7 @@ export default function HomePage() {
             <span className="block text-white text-4xl sm:text-5xl lg:text-7xl font-black">
               Элегантность
             </span>
-            <span className="block text-gradient-hero text-4xl sm:text-5xl lg:text-7xl font-black">
+            <span className="block bg-gradient-to-r from-emerald-300 to-emerald-100 bg-clip-text text-transparent text-4xl sm:text-5xl lg:text-7xl font-black">
               в каждой детали
             </span>
           </h1>
@@ -312,10 +306,10 @@ export default function HomePage() {
                     КАТЕГОРИИ
                   </span>
                 </div>
-                <h2 className="text-theme-primary text-4xl font-extrabold mb-2 tracking-tight">
+                <h2 className="text-foreground text-4xl font-extrabold mb-2 tracking-tight">
                   Выберите стиль
                 </h2>
-                <p className="text-theme-secondary text-lg font-normal">
+                <p className="text-muted-foreground text-lg font-normal">
                   Откройте для себя мир премиальной моды
                 </p>
               </div>
@@ -354,7 +348,7 @@ export default function HomePage() {
                   </div>
                   
                   <div className="p-4 text-center flex flex-col justify-center h-20">
-                    <p className="text-theme-secondary text-xs font-medium mb-1.5">
+                    <p className="text-muted-foreground text-xs font-medium mb-1.5">
                       {category.count} товаров
                     </p>
                     <div className="w-8 h-0.5 bg-gradient-emerald mx-auto rounded" />
@@ -376,10 +370,10 @@ export default function HomePage() {
                     КОЛЛЕКЦИЯ
                   </span>
                 </div>
-                <h2 className="text-theme-primary text-4xl font-extrabold mb-2 tracking-tight">
+                <h2 className="text-foreground text-4xl font-extrabold mb-2 tracking-tight">
                   Премиальные товары
                 </h2>
-                <p className="text-theme-secondary text-lg font-normal">
+                <p className="text-muted-foreground text-lg font-normal">
                   Самые востребованные позиции сезона
                 </p>
               </div>
@@ -424,11 +418,10 @@ export default function HomePage() {
         )}
 
         {/* Премиальная CTA секция */}
-        <section className="mt-18 p-12 bg-gradient-surface dark:bg-gradient-surface-dark rounded-3xl text-center relative overflow-hidden border border-theme">
+        <section className="mt-18 p-12 bg-gradient-surface dark:bg-gradient-surface-dark rounded-3xl text-center relative overflow-hidden border border-border">
           {/* Декоративные элементы */}
           <div className="animate-float absolute -top-25 -right-25 w-75 h-75 bg-gradient-emerald rounded-full opacity-10 filter blur-3xl" />
-          <div className="animate-float absolute -bottom-12 -left-12 w-50 h-50 bg-gradient-emerald rounded-full opacity-8 filter blur-2xl"
-               style={{ animationDelay: '3s' }} />
+          <div className="animate-float absolute -bottom-12 -left-12 w-50 h-50 bg-gradient-emerald rounded-full opacity-8 filter blur-2xl delay-[3s]" />
           
           <div className="relative z-10">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-emerald rounded-full mb-6">
@@ -438,10 +431,10 @@ export default function HomePage() {
               </span>
             </div>
             
-            <h3 className="text-theme-primary text-5xl font-extrabold mb-4 tracking-tight">
+            <h3 className="text-foreground text-5xl font-extrabold mb-4 tracking-tight">
               Станьте частью сообщества
             </h3>
-            <p className="text-theme-secondary text-xl mb-10 max-w-2xl mx-auto leading-relaxed font-normal">
+            <p className="text-muted-foreground text-xl mb-10 max-w-2xl mx-auto leading-relaxed font-normal">
               Получайте эксклюзивные предложения, первыми узнавайте о новых коллекциях 
               и получите скидку 15% на первый заказ
             </p>
@@ -463,15 +456,15 @@ export default function HomePage() {
 
             {/* Дополнительная информация */}
             <div className="mt-8 flex justify-center items-center gap-6 flex-wrap">
-              <div className="flex items-center gap-2 text-theme-secondary text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full" />
                 Бесплатная доставка от 5000₽
               </div>
-              <div className="flex items-center gap-2 text-theme-secondary text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full" />
                 Гарантия качества
               </div>
-              <div className="flex items-center gap-2 text-theme-secondary text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full" />
                 Возврат 30 дней
               </div>
@@ -480,13 +473,13 @@ export default function HomePage() {
         </section>
 
         {/* Секция статистики */}
-        <section className="mt-15 py-10 border-t border-b border-theme">
+        <section className="mt-15 py-10 border-t border-b border-border">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
             <div>
               <div className="text-emerald-600 text-4xl font-extrabold mb-2">
                 10K+
               </div>
-              <p className="text-theme-secondary text-base font-medium">
+              <p className="text-muted-foreground text-base font-medium">
                 Довольных клиентов
               </p>
             </div>
@@ -494,7 +487,7 @@ export default function HomePage() {
               <div className="text-emerald-600 text-4xl font-extrabold mb-2">
                 500+
               </div>
-              <p className="text-theme-secondary text-base font-medium">
+              <p className="text-muted-foreground text-base font-medium">
                 Брендов в каталоге
               </p>
             </div>
@@ -502,7 +495,7 @@ export default function HomePage() {
               <div className="text-emerald-600 text-4xl font-extrabold mb-2">
                 98%
               </div>
-              <p className="text-theme-secondary text-base font-medium">
+              <p className="text-muted-foreground text-base font-medium">
                 Положительных отзывов
               </p>
             </div>
@@ -510,7 +503,7 @@ export default function HomePage() {
               <div className="text-emerald-600 text-4xl font-extrabold mb-2">
                 24/7
               </div>
-              <p className="text-theme-secondary text-base font-medium">
+              <p className="text-muted-foreground text-base font-medium">
                 Поддержка клиентов
               </p>
             </div>
