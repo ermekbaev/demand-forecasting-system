@@ -3,83 +3,39 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/utils';
-
-// Иконки для мобильной навигации
-const HomeIcon = ({ size = 24 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-    <polyline points="9,22 9,12 15,12 15,22"/>
-  </svg>
-);
-
-const SearchIcon = ({ size = 24 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="11" cy="11" r="8"/>
-    <path d="m21 21-4.35-4.35"/>
-  </svg>
-);
-
-const GridIcon = ({ size = 24 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="3" width="7" height="7"/>
-    <rect x="14" y="3" width="7" height="7"/>
-    <rect x="14" y="14" width="7" height="7"/>
-    <rect x="3" y="14" width="7" height="7"/>
-  </svg>
-);
-
-const HeartIcon = ({ size = 24 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-  </svg>
-);
-
-const UserIcon = ({ size = 24 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
-  </svg>
-);
-
-const ShoppingBagIcon = ({ size = 24 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-    <line x1="3" y1="6" x2="21" y2="6"/>
-    <path d="m16 10a4 4 0 0 1-8 0"/>
-  </svg>
-);
 
 // Навигационные элементы для мобильной версии
 const mobileNavItems = [
   {
     name: 'Главная',
     href: '/',
-    icon: HomeIcon,
+    icon: 'home',
     badge: null,
   },
   {
     name: 'Поиск',
     href: '/search',
-    icon: SearchIcon,
+    icon: 'search',
     badge: null,
   },
   {
     name: 'Каталог',
     href: '/catalog',
-    icon: GridIcon,
+    icon: 'grid',
     badge: null,
   },
   {
     name: 'Избранное',
     href: '/favorites',
-    icon: HeartIcon,
+    icon: 'heart',
     badge: 'favorites',
   },
   {
     name: 'Профиль',
     href: '/profile',
-    icon: UserIcon,
+    icon: 'user',
     badge: null,
   },
 ];
@@ -138,74 +94,44 @@ export function MobileNav({ cartCount = 0, favoritesCount = 0 }: MobileNavProps)
               >
                 {/* Иконка с индикатором активности */}
                 <div className="relative flex items-center justify-center w-7 h-7">
-                  <item.icon 
+                  <Icon 
+                    name={item.icon as any}
                     size={24} 
                     className="transition-colors duration-200" 
                   />
                   
                   {/* Бейдж с количеством */}
                   {badgeCount > 0 && (
-                    <div className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] bg-destructive border-2 border-background rounded-full flex items-center justify-center text-[10px] font-bold text-destructive-foreground px-1">
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-destructive rounded-full border-2 border-background flex items-center justify-center text-xs font-bold text-destructive-foreground min-w-[20px]">
                       {badgeCount > 99 ? '99+' : badgeCount}
                     </div>
                   )}
-                  
-                  {/* Индикатор активности */}
+
+                  {/* Индикатор активного состояния */}
                   {active && (
-                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full animate-pulse" />
+                    <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full animate-pulse" />
                   )}
                 </div>
-                
+
                 {/* Название */}
                 <span className={cn(
-                  "text-[11px] font-medium transition-all duration-200 tracking-wide text-center leading-tight",
-                  active ? "font-bold" : "font-medium"
+                  "text-xs font-semibold tracking-tight transition-colors duration-200",
+                  active ? "text-primary" : "text-muted-foreground"
                 )}>
                   {item.name}
                 </span>
+
+                {/* Подсветка активного элемента */}
+                {active && (
+                  <div className="absolute inset-0 bg-primary/10 rounded-2xl -z-10 animate-fadeIn" />
+                )}
               </Link>
             );
           })}
-          
-          {/* Отдельная кнопка корзины с особым дизайном */}
-          <button
-            onClick={() => router.push('/cart')}
-            className={cn(
-              "relative flex flex-col items-center gap-1 p-2 px-3 rounded-2xl border-0 cursor-pointer transition-all duration-300 min-w-[60px]",
-              pathname === '/cart' 
-                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30"
-                : "bg-muted text-foreground hover:bg-primary hover:text-primary-foreground active:scale-95"
-            )}
-          >
-            {/* Иконка корзины */}
-            <div className="relative flex items-center justify-center w-7 h-7">
-              <ShoppingBagIcon 
-                size={24} 
-                className="transition-colors duration-200"
-              />
-              
-              {/* Бейдж корзины */}
-              {cartCount > 0 && (
-                <div className={cn(
-                  "absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] border-2 border-background rounded-full flex items-center justify-center text-[10px] font-bold px-1 animate-bounce",
-                  pathname === '/cart' 
-                    ? "bg-white text-primary" 
-                    : "bg-primary text-primary-foreground"
-                )}>
-                  {cartCount > 99 ? '99+' : cartCount}
-                </div>
-              )}
-            </div>
-            
-            {/* Название */}
-            <span className={cn(
-              "text-[11px] font-medium transition-all duration-200 tracking-wide text-center leading-tight",
-              pathname === '/cart' ? "font-bold" : "font-medium"
-            )}>
-              Корзина
-            </span>
-          </button>
         </div>
+
+        {/* Декоративный элемент внизу */}
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-border rounded-t-full" />
       </nav>
     </>
   );

@@ -5,63 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SearchBar } from '@/components/search/SearchBar';
 import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/utils';
-
-// Иконки
-const SearchIcon = ({ size = 20, className }: { size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <circle cx="11" cy="11" r="8"/>
-    <path d="m21 21-4.35-4.35"/>
-  </svg>
-);
-
-const ShoppingBagIcon = ({ size = 20, className }: { size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-    <line x1="3" y1="6" x2="21" y2="6"/>
-    <path d="m16 10a4 4 0 0 1-8 0"/>
-  </svg>
-);
-
-const HeartIcon = ({ size = 20, className }: { size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <path d="20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-  </svg>
-);
-
-const UserIcon = ({ size = 20, className }: { size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
-  </svg>
-);
-
-const MenuIcon = ({ size = 24, className }: { size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <line x1="4" y1="12" x2="20" y2="12"/>
-    <line x1="4" y1="6" x2="20" y2="6"/>
-    <line x1="4" y1="18" x2="20" y2="18"/>
-  </svg>
-);
-
-const XIcon = ({ size = 24, className }: { size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <path d="M18 6L6 18"/>
-    <path d="M6 6l12 12"/>
-  </svg>
-);
-
-const ChevronDownIcon = ({ size = 16, className }: { size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <path d="m6 9 6 6 6-6"/>
-  </svg>
-);
-
-const DiamondIcon = ({ size = 20, className }: { size?: number; className?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <path d="M6 3h12l4 6-10 12L2 9z"/>
-  </svg>
-);
 
 // Навигационные ссылки
 const navigationLinks = [
@@ -174,7 +119,7 @@ export function Header() {
               className="flex items-center gap-3 no-underline z-2 group"
             >
               <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:shadow-lg">
-                <DiamondIcon size={20} className="text-white" />
+                <Icon name="gem" size={20} className="text-white" />
               </div>
               <div>
                 <div className="text-2xl font-extrabold text-foreground leading-none tracking-tight">
@@ -205,7 +150,8 @@ export function Header() {
                   >
                     {link.name}
                     {link.hasDropdown && (
-                      <ChevronDownIcon 
+                      <Icon 
+                        name="chevron-down"
                         size={14} 
                         className={cn(
                           'transition-transform duration-200',
@@ -247,63 +193,64 @@ export function Header() {
             <div className="flex items-center gap-2">
               
               {/* Мобильный поиск */}
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => router.push('/search')}
-                className="md:hidden flex items-center justify-center w-11 h-11 bg-muted rounded-xl border-0 cursor-pointer transition-all duration-200 hover:bg-primary hover:text-primary-foreground hover:scale-105"
+                className="md:hidden rounded-xl"
               >
-                <SearchIcon size={20} />
-              </button>
+                <Icon name="search" size={20} />
+              </Button>
 
               {/* Избранное */}
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => router.push('/favorites')}
-                className="relative flex items-center justify-center w-11 h-11 bg-muted rounded-xl border-0 cursor-pointer transition-all duration-200 hover:bg-primary hover:text-primary-foreground hover:scale-105"
+                className="relative rounded-xl"
               >
-                <HeartIcon size={20} />
+                <Icon name="heart" size={20} />
                 {favoritesCount > 0 && (
                   <div className="absolute -top-1 -right-1 w-5 h-5 bg-destructive rounded-full border-2 border-card flex items-center justify-center text-xs font-bold text-destructive-foreground">
                     {favoritesCount}
                   </div>
                 )}
-              </button>
+              </Button>
 
               {/* Корзина */}
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => router.push('/cart')}
-                className="relative flex items-center justify-center w-11 h-11 bg-muted rounded-xl border-0 cursor-pointer transition-all duration-200 hover:bg-primary hover:text-primary-foreground hover:scale-105"
+                className="relative rounded-xl"
               >
-                <ShoppingBagIcon size={20} />
+                <Icon name="shopping-bag" size={20} />
                 {cartItemsCount > 0 && (
                   <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full border-2 border-card flex items-center justify-center text-xs font-bold text-primary-foreground">
                     {cartItemsCount}
                   </div>
                 )}
-              </button>
+              </Button>
 
               {/* Профиль */}
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => router.push('/profile')}
-                className="hidden sm:flex items-center justify-center w-11 h-11 bg-muted rounded-xl border-0 cursor-pointer transition-all duration-200 hover:bg-primary hover:text-primary-foreground hover:scale-105"
+                className="hidden sm:flex rounded-xl"
               >
-                <UserIcon size={20} />
-              </button>
+                <Icon name="user" size={20} />
+              </Button>
 
               {/* Мобильное меню */}
-              <button
+              <Button
+                variant={isMobileMenuOpen ? "default" : "ghost"}
+                size="icon"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={cn(
-                  'lg:hidden flex items-center justify-center w-11 h-11 rounded-xl border-0 cursor-pointer transition-all duration-200',
-                  isMobileMenuOpen 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-muted hover:bg-primary hover:text-primary-foreground'
-                )}
+                className="lg:hidden rounded-xl"
               >
-                {isMobileMenuOpen ? (
-                  <XIcon size={20} />
-                ) : (
-                  <MenuIcon size={20} />
-                )}
-              </button>
+                <Icon name={isMobileMenuOpen ? "close" : "menu"} size={20} />
+              </Button>
             </div>
           </div>
         </div>
@@ -339,14 +286,17 @@ export function Header() {
 
               {/* Дополнительные ссылки */}
               <div className="flex gap-3 pt-5 border-t border-border">
-                <Link
-                  href="/profile"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-muted rounded-xl no-underline text-foreground font-semibold transition-all duration-200 active:bg-primary active:text-primary-foreground"
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    router.push('/profile');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="flex-1"
                 >
-                  <UserIcon size={18} />
+                  <Icon name="user" size={18} />
                   Профиль
-                </Link>
+                </Button>
               </div>
             </div>
           </div>
