@@ -186,31 +186,37 @@ StatusBadge.displayName = "StatusBadge"
 
 // Category Badge Component
 interface CategoryBadgeProps extends BadgeProps {
-  category: string
-  color?: string
+  category: string;
+  color?: string;
 }
 
 const CategoryBadge = React.forwardRef<HTMLDivElement, CategoryBadgeProps>(
-  ({ category, color, style, ...props }, ref) => {
-    const badgeStyle = color 
-      ? {
-          backgroundColor: `${color}20`,
-          borderColor: `${color}40`,
-          color: color,
-          ...style
-        }
-      : style
+  ({ category, color, className, ...props }, ref) => {
+    // Если цвет передан, используем CSS переменные
+    const customColorStyle = color ? {
+      '--badge-bg': `${color}20`,
+      '--badge-border': `${color}40`,
+      '--badge-text': color,
+    } as React.CSSProperties : undefined;
 
     return (
       <Badge
         ref={ref}
         variant="outline"
-        style={badgeStyle}
+        className={cn(
+          // Базовые стили
+          'border-[var(--badge-border,theme(colors.border))]',
+          'bg-[var(--badge-bg,transparent)]', 
+          'text-[var(--badge-text,theme(colors.foreground))]',
+          // Hover эффекты
+          'hover:bg-[var(--badge-bg,theme(colors.muted))]',
+          className
+        )}
         {...props}
       >
         {category}
       </Badge>
-    )
+    );
   }
 )
 CategoryBadge.displayName = "CategoryBadge"

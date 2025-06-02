@@ -306,25 +306,25 @@ export default function CartPage() {
               </div>
 
               {/* Free shipping notice */}
-              {subtotal < 5000 && (
+                {subtotal < 5000 && (
                 <div className="bg-muted/50 rounded-lg p-4 mb-6">
-                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-2">
                     <Icon name="truck" size="sm" className="text-primary" />
                     <span className="text-sm font-semibold text-foreground">
-                      Бесплатная доставка
+                        Бесплатная доставка
                     </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-3">
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
                     Добавьте товаров на {formatPrice(5000 - subtotal)} для бесплатной доставки
-                  </p>
-                  <div className="w-full bg-border rounded-full h-2">
+                    </p>
+                    <div className="progress-container">
                     <div 
-                      className="bg-primary h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${Math.min((subtotal / 5000) * 100, 100)}%` }}
+                        className="shipping-progress"
+                        style={{ '--shipping-progress': `${Math.min((subtotal / 5000) * 100, 100)}%` }}
                     />
-                  </div>
+                    </div>
                 </div>
-              )}
+                )}
 
               {/* Checkout button */}
               <Button className="w-full mb-4" size="lg">

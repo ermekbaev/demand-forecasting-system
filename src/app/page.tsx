@@ -38,6 +38,12 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Обработка поиска - выносим наверх перед useEffect
+  const handleSearch = (searchQuery: string) => {
+    if (!searchQuery.trim()) return;
+    window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+  };
+
   // Загрузка данных с API
   useEffect(() => {
     const fetchData = async () => {
@@ -138,20 +144,8 @@ export default function HomePage() {
     }
   };
 
-  // Обработка поиска
-  const handleSearch = (searchQuery: string) => {
-    if (!searchQuery.trim()) return;
-    window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
-  };
-
   if (loading) {
-    // Обработка поиска с правильной типизацией
-  const handleSearchWithQuery = (searchQuery: string) => {
-    if (!searchQuery.trim()) return;
-    window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
-  };
-
-  return (
+    return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-border border-t-primary mx-auto mb-6" />
@@ -229,7 +223,7 @@ export default function HomePage() {
             <SearchBar 
               placeholder="Поиск премиальных товаров..."
               variant="hero"
-              onSearch={handleSearchWithQuery}
+              onSearch={handleSearch}
               showSuggestions={true}
             />
           </div>
