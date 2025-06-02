@@ -32,7 +32,7 @@ export default function NotFound() {
           </Link>
           
           <button
-            onClick={() => window.history.back()}
+            // onClick={() => window.history.back()}
             className="inline-block w-full px-6 py-3 rounded-lg font-medium border transition-all duration-200 hover:scale-105 text-foreground border-border bg-card"
           >
             Назад

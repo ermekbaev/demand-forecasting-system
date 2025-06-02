@@ -24,20 +24,6 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 142 76% 36%;
     --radius: 0.75rem;
-
-    /* Кастомные CSS переменные для старых компонентов */
-    --color-text: #0f172a;
-    --color-background: #f8fafc;
-    --color-tint: #10b981;
-    --color-card: #ffffff;
-    --color-border: #e2e8f0;
-    --color-placeholder: #64748b;
-    --color-search-background: #f1f5f9;
-    --color-card-background: #f1f5f9;
-    --color-error: #dc2626;
-    --color-success: #10b981;
-    --color-warning: #d97706;
-    --color-info: #0284c7;
   }
 
   .dark {
@@ -60,20 +46,6 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 142 69% 58%;
-
-    /* Темная тема для кастомных переменных */
-    --color-text: #f1f5f9;
-    --color-background: #0f172a;
-    --color-tint: #34d399;
-    --color-card: #1e293b;
-    --color-border: #334155;
-    --color-placeholder: #94a3b8;
-    --color-search-background: #334155;
-    --color-card-background: #334155;
-    --color-error: #ef4444;
-    --color-success: #34d399;
-    --color-warning: #f59e0b;
-    --color-info: #06b6d4;
   }
 }
 
@@ -85,27 +57,6 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-  }
-
-  /* Кастомные стили для компонентов, которые еще не мигрированы */
-  .bg-theme-background {
-    @apply bg-background;
-  }
-
-  .text-theme-primary {
-    @apply text-foreground;
-  }
-
-  .text-theme-secondary {
-    @apply text-muted-foreground;
-  }
-
-  .border-theme {
-    @apply border-border;
-  }
-
-  .input-theme {
-    @apply w-full px-4 py-3 bg-background border border-input rounded-xl text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/20 transition-all duration-200;
   }
 }
 
@@ -119,15 +70,6 @@
     @apply backdrop-blur-lg bg-black/10 border border-white/10;
   }
 
-  /* Премиальные карточки */
-  .premium-card {
-    @apply relative overflow-hidden transition-all duration-300;
-  }
-
-  .emerald-accent {
-    @apply hover:shadow-emerald-lg hover:-translate-y-1;
-  }
-
   /* Сетки продуктов - адаптивные */
   .products-grid {
     @apply grid gap-6;
@@ -139,57 +81,7 @@
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
 
-  /* Тематические классы */
-  .hero-gradient {
-    @apply bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900;
-  }
-
-  /* Градиенты */
-  .bg-gradient-hero {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #065f46 100%);
-  }
-
-  .bg-gradient-emerald {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  }
-
-  .bg-gradient-surface {
-    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-  }
-
-  .bg-gradient-surface-dark {
-    background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
-  }
-
-  .bg-gradient-button {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  }
-
-  /* Тени */
-  .shadow-emerald {
-    box-shadow: 0 10px 30px -15px rgba(5, 150, 105, 0.3);
-  }
-
-  .shadow-emerald-lg {
-    box-shadow: 0 20px 40px -15px rgba(5, 150, 105, 0.4);
-  }
-
-  .progress-bar {
-    @apply h-2 bg-primary rounded-full transition-all duration-300;
-    width: var(--progress, 0%);
-  }
-
-  .progress-container {
-    @apply w-full bg-border rounded-full h-2 overflow-hidden;
-  }
-
-  /* Прогресс-бар для доставки */
-  .shipping-progress {
-    @apply h-2 bg-primary rounded-full transition-all duration-300;
-    width: var(--shipping-progress, 0%);
-  }
-
-  /* Декоративные blob формы */
+  /* Декоративные blob формы - уже в tailwind.config.js */
   .blob-shape-1 {
     border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
   }
@@ -210,218 +102,6 @@
 
   .color-indicator.selected {
     @apply border-primary scale-110;
-  }
-
-  /* Анимации */
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-20px);
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes slideDown {
-    from {
-      transform: translateY(-10px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes slideUp {
-    from {
-      transform: translateY(10px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes scaleIn {
-    from {
-      transform: scale(0.9);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-
-  @keyframes shimmer {
-    from {
-      transform: translateX(-100%);
-    }
-    to {
-      transform: translateX(100%);
-    }
-  }
-
-  @keyframes loadingProgress {
-    0% {
-      width: 0%;
-    }
-    50% {
-      width: 70%;
-    }
-    100% {
-      width: 100%;
-    }
-  }
-
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .animate-fadeIn {
-    animation: fadeIn 0.5s ease-in-out;
-  }
-
-  .animate-slideDown {
-    animation: slideDown 0.3s ease-out;
-  }
-
-  .animate-slideUp {
-    animation: slideUp 0.3s ease-out;
-  }
-
-  .animate-scaleIn {
-    animation: scaleIn 0.2s ease-out;
-  }
-
-  .animate-shimmer {
-    animation: shimmer 2s linear infinite;
-  }
-
-  .animate-loading-progress {
-    animation: loadingProgress 2s ease-in-out infinite;
-  }
-
-  /* Задержки для анимаций */
-  .delay-\[2s\] {
-    animation-delay: 2s;
-  }
-
-  .delay-\[3s\] {
-    animation-delay: 3s;
-  }
-
-  .delay-\[4s\] {
-    animation-delay: 4s;
-  }
-
-  /* Утилитарные классы для размеров */
-  .w-15 {
-    width: 3.75rem;
-  }
-
-  .h-15 {
-    height: 3.75rem;
-  }
-
-  .w-20 {
-    width: 5rem;
-  }
-
-  .h-20 {
-    height: 5rem;
-  }
-
-  .w-25 {
-    width: 6.25rem;
-  }
-
-  .h-25 {
-    height: 6.25rem;
-  }
-
-  .w-30 {
-    width: 7.5rem;
-  }
-
-  .h-30 {
-    height: 7.5rem;
-  }
-
-  .w-50 {
-    width: 12.5rem;
-  }
-
-  .h-50 {
-    height: 12.5rem;
-  }
-
-  .w-75 {
-    width: 18.75rem;
-  }
-
-  .h-75 {
-    height: 18.75rem;
-  }
-
-  .py-25 {
-    padding-top: 6.25rem;
-    padding-bottom: 6.25rem;
-  }
-
-  .py-30 {
-    padding-top: 7.5rem;
-    padding-bottom: 7.5rem;
-  }
-
-  .py-15 {
-    padding-top: 3.75rem;
-    padding-bottom: 3.75rem;
-  }
-
-  .mb-18 {
-    margin-bottom: 4.5rem;
-  }
-
-  .mt-18 {
-    margin-top: 4.5rem;
-  }
-
-  .mt-15 {
-    margin-top: 3.75rem;
-  }
-
-  .-top-25 {
-    top: -6.25rem;
-  }
-
-  .-right-25 {
-    right: -6.25rem;
-  }
-
-  .-bottom-12 {
-    bottom: -3rem;
-  }
-
-  .-left-12 {
-    left: -3rem;
-  }
-
-  .py-4\.5 {
-    padding-top: 1.125rem;
-    padding-bottom: 1.125rem;
   }
 }
 
@@ -448,16 +128,6 @@
     .products-grid-compact {
       grid-template-columns: repeat(4, 1fr);
     }
-  }
-
-  /* Clip-path утилиты */
-  .bg-clip-text {
-    -webkit-background-clip: text;
-    background-clip: text;
-  }
-
-  .text-transparent {
-    color: transparent;
   }
 
   /* Поддержка для старых браузеров */
