@@ -1,4 +1,3 @@
-// src/components/ui/ProgressBar.tsx
 import React from 'react';
 import { cn } from '@/lib/utils';
 
@@ -45,20 +44,42 @@ export function ProgressBar({
       
       {/* Контейнер прогресс-бара */}
       <div className={cn('w-full bg-border rounded-full overflow-hidden', sizeClasses[size])}>
-        {/* Полоса прогресса - используем transform для ширины */}
+        {/* Полоса прогресса - используем только Tailwind классы */}
         <div 
           className={cn(
-            'h-full rounded-full transition-all duration-300 origin-left',
+            'h-full rounded-full transition-all duration-300',
+            // Динамическая ширина через Tailwind утилиты
+            progressValue === 0 && 'w-0',
+            progressValue >= 1 && progressValue < 5 && 'w-1',
+            progressValue >= 5 && progressValue < 10 && 'w-[5%]',
+            progressValue >= 10 && progressValue < 15 && 'w-[10%]',
+            progressValue >= 15 && progressValue < 20 && 'w-[15%]',
+            progressValue >= 20 && progressValue < 25 && 'w-1/5',
+            progressValue >= 25 && progressValue < 30 && 'w-1/4',
+            progressValue >= 30 && progressValue < 35 && 'w-[30%]',
+            progressValue >= 35 && progressValue < 40 && 'w-[35%]',
+            progressValue >= 40 && progressValue < 45 && 'w-2/5',
+            progressValue >= 45 && progressValue < 50 && 'w-[45%]',
+            progressValue >= 50 && progressValue < 55 && 'w-1/2',
+            progressValue >= 55 && progressValue < 60 && 'w-[55%]',
+            progressValue >= 60 && progressValue < 65 && 'w-3/5',
+            progressValue >= 65 && progressValue < 70 && 'w-[65%]',
+            progressValue >= 70 && progressValue < 75 && 'w-[70%]',
+            progressValue >= 75 && progressValue < 80 && 'w-3/4',
+            progressValue >= 80 && progressValue < 85 && 'w-4/5',
+            progressValue >= 85 && progressValue < 90 && 'w-[85%]',
+            progressValue >= 90 && progressValue < 95 && 'w-[90%]',
+            progressValue >= 95 && progressValue < 100 && 'w-[95%]',
+            progressValue === 100 && 'w-full',
             variantClasses[variant]
           )}
-          style={{ transform: `scaleX(${progressValue / 100})` }}
         />
       </div>
     </div>
   );
 }
 
-// Альтернативный подход через CSS Grid (еще чище)
+// Альтернативная версия с CSS Grid (полностью без style)
 export function ProgressBarGrid({
   progress,
   variant = 'default',
@@ -79,21 +100,76 @@ export function ProgressBarGrid({
   };
 
   const progressValue = Math.min(Math.max(progress, 0), 100);
+  
+  // Создаем массив из 100 сегментов для Grid прогресс-бара
+  const segments = Array.from({ length: 100 }, (_, i) => i < progressValue);
 
   return (
-    <div className={cn('w-full bg-border rounded-full overflow-hidden', sizeClasses[size], className)}>
+    <div className={cn(
+      'grid grid-cols-100 gap-px w-full bg-border rounded-full overflow-hidden',
+      sizeClasses[size],
+      className
+    )}>
+      {segments.map((filled, index) => (
+        <div
+          key={index}
+          className={cn(
+            'h-full transition-all duration-75',
+            filled ? variantClasses[variant] : 'bg-transparent'
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Минималистичная версия для простых случаев
+export function ProgressBarSimple({
+  progress,
+  variant = 'default',
+}: {
+  progress: number;
+  variant?: 'default' | 'success' | 'warning' | 'error';
+}) {
+  const progressValue = Math.min(Math.max(progress, 0), 100);
+  
+  // Простая логика с фиксированными точками
+  const getWidthClass = (value: number) => {
+    if (value === 0) return 'w-0';
+    if (value <= 10) return 'w-[10%]';
+    if (value <= 20) return 'w-1/5';
+    if (value <= 25) return 'w-1/4';
+    if (value <= 30) return 'w-[30%]';
+    if (value <= 40) return 'w-2/5';
+    if (value <= 50) return 'w-1/2';
+    if (value <= 60) return 'w-3/5';
+    if (value <= 75) return 'w-3/4';
+    if (value <= 80) return 'w-4/5';
+    if (value <= 90) return 'w-[90%]';
+    return 'w-full';
+  };
+
+  const variantClasses = {
+    default: 'bg-primary',
+    success: 'bg-emerald-500',
+    warning: 'bg-amber-500',
+    error: 'bg-red-500',
+  };
+
+  return (
+    <div className="w-full bg-border rounded-full h-2 overflow-hidden">
       <div 
         className={cn(
           'h-full rounded-full transition-all duration-300',
+          getWidthClass(progressValue),
           variantClasses[variant]
         )}
-        style={{ width: `${progressValue}%` }}
       />
     </div>
   );
 }
 
-// Специальный компонент для прогресса доставки
+// Специальный компонент для прогресса доставки (без style атрибутов)
 interface ShippingProgressProps {
   current: number;
   target: number;
@@ -108,7 +184,7 @@ export function ShippingProgress({ current, target, className }: ShippingProgres
   return (
     <div className={cn('bg-muted/50 rounded-lg p-4', className)}>
       <div className="flex items-center gap-2 mb-2">
-        <div className="w-4 h-4 text-primary">
+        <div className="text-primary text-base">
           🚚
         </div>
         <span className="text-sm font-semibold text-foreground">
@@ -123,10 +199,9 @@ export function ShippingProgress({ current, target, className }: ShippingProgres
         }
       </p>
       
-      <ProgressBar 
+      <ProgressBarSimple 
         progress={progress} 
         variant={progress >= 100 ? 'success' : 'default'}
-        size="default"
       />
     </div>
   );
