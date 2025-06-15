@@ -1,14 +1,23 @@
 {
+<<<<<<< HEAD
   "name": "store-premium",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
+=======
+  "name": "nextapp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+>>>>>>> 604b24aefec1b3b11b702476a01bc13faac18ac8
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@radix-ui/react-slot": "^1.0.2",
     "@tanstack/react-query": "^5.79.0",
     "@tanstack/react-query-devtools": "^5.79.0",
@@ -41,5 +50,26 @@
     "postcss": "^8.5.4",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.0.0"
+=======
+    "@types/jspdf": "^2.0.0",
+    "jspdf": "^3.0.1",
+    "next": "15.2.4",
+    "papaparse": "^5.5.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^2.15.2",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/papaparse": "^5.3.15",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint-config-next": "15.2.4",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+>>>>>>> 604b24aefec1b3b11b702476a01bc13faac18ac8
   }
 }
