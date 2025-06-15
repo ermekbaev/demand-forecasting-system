@@ -19,9 +19,9 @@ export async function GET(request: NextRequest) {
     const sort = searchParams.get('sort') || 'relevance';
     const limit = parseInt(searchParams.get('limit') || '25');
     
-    console.log('🔍 Search API - Параметры запроса:', {
-      query, category, brand, minPrice, maxPrice, sort, limit
-    });
+    // console.log('🔍 Search API - Параметры запроса:', {
+    //   query, category, brand, minPrice, maxPrice, sort, limit
+    // });
     
     if (!query && !category && !brand) {
       return Response.json(
@@ -37,31 +37,31 @@ export async function GET(request: NextRequest) {
       maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
     };
     
-    console.log('🔍 Фильтры для поиска:', filters);
+    // console.log('🔍 Фильтры для поиска:', filters);
     
     // Выполняем поиск
     const products = await searchProducts(query, filters);
-    console.log(`📊 Найдено ${products.length} продуктов из API`);
+    // console.log(`📊 Найдено ${products.length} продуктов из API`);
     
     // Ограичиваем результаты
     const limitedProducts = products.slice(0, limit);
-    console.log(`📏 Ограничиваем до ${limit}, итого: ${limitedProducts.length}`);
+    // console.log(`📏 Ограничиваем до ${limit}, итого: ${limitedProducts.length}`);
     
     // ✅ ИСПОЛЬЗУЕМ formatApiProduct для правильной обработки изображений
-    console.log('🔄 Начинаем обработку продуктов с formatApiProduct...');
+    // console.log('🔄 Начинаем обработку продуктов с formatApiProduct...');
     
     const processedResults = await Promise.all(
       limitedProducts.map(async (product, index) => {
-        console.log(`🔄 Обрабатываем продукт ${index + 1}/${limitedProducts.length}: ${product.Name}`);
+        // console.log(`🔄 Обрабатываем продукт ${index + 1}/${limitedProducts.length}: ${product.Name}`);
         
         try {
           // ✅ Получаем модели для правильных изображений (КАК В /api/products)
           const models = await fetchModels(product.slug);
-          console.log(`🎨 Для продукта ${product.slug} найдено ${models.length} моделей`);
+          // console.log(`🎨 Для продукта ${product.slug} найдено ${models.length} моделей`);
           
           // ✅ Форматируем продукт с моделями
           const formatted = await formatApiProduct(product, models);
-          console.log(`✅ Продукт ${product.slug} отформатирован с изображением: ${formatted.imageUrl}`);
+          // console.log(`✅ Продукт ${product.slug} отформатирован с изображением: ${formatted.imageUrl}`);
           
           // ✅ Возвращаем в формате для поиска
           return {
@@ -131,12 +131,12 @@ export async function GET(request: NextRequest) {
       // 'relevance' - оставляем как есть
     }
     
-    console.log('✅ Поиск завершен успешно');
-    console.log('🔍 Первый результат для проверки:', {
-      slug: sortedResults[0]?.slug,
-      imageUrl: sortedResults[0]?.imageUrl,
-      hasRealImage: sortedResults[0]?.imageUrl && !sortedResults[0].imageUrl.includes('placehold')
-    });
+    // console.log('✅ Поиск завершен успешно');
+    // console.log('🔍 Первый результат для проверки:', {
+    //   slug: sortedResults[0]?.slug,
+    //   imageUrl: sortedResults[0]?.imageUrl,
+    //   hasRealImage: sortedResults[0]?.imageUrl && !sortedResults[0].imageUrl.includes('placehold')
+    // });
     
     return Response.json({
       results: sortedResults,

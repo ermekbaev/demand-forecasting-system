@@ -20,9 +20,9 @@ export async function GET(request: NextRequest) {
     const minPrice = searchParams.get('minPrice');
     const maxPrice = searchParams.get('maxPrice');
     
-    console.log('🚀 Products API route - Параметры запроса:', {
-      limit, featured, category, brand, search, minPrice, maxPrice
-    });
+    // console.log('🚀 Products API route - Параметры запроса:', {
+    //   limit, featured, category, brand, search, minPrice, maxPrice
+    // });
     
     let products: Product[] = [];
     
@@ -35,25 +35,25 @@ export async function GET(request: NextRequest) {
         maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
       };
       
-      console.log('🔍 Используем поиск с фильтрами:', filters);
+      // console.log('🔍 Используем поиск с фильтрами:', filters);
       products = await searchProducts(search || '', filters);
     } else {
       // Иначе получаем все продукты
-      console.log('📦 Загружаем все продукты');
+      // console.log('📦 Загружаем все продукты');
       products = await fetchProducts();
     }
     
-    console.log(`📊 Получено ${products.length} продуктов из API`);
+    // console.log(`📊 Получено ${products.length} продуктов из API`);
     
     // Фильтрация featured товаров
     if (featured === 'true') {
-      console.log('⭐ Фильтруем featured товары');
+      // console.log('⭐ Фильтруем featured товары');
       products = products.filter(product => 
         product.Price > 5000 || // дорогие товары
         product.Name.toLowerCase().includes('nike') || // популярные бренды
         product.Name.toLowerCase().includes('adidas')
       );
-      console.log(`⭐ Осталось ${products.length} featured товаров`);
+      // console.log(`⭐ Осталось ${products.length} featured товаров`);
     }
     
     // Ограничиваем количество
@@ -61,20 +61,20 @@ export async function GET(request: NextRequest) {
     console.log(`📏 Ограничиваем до ${limit}, итого: ${limitedProducts.length}`);
     
     // ✅ ИСПОЛЬЗУЕМ formatApiProduct КАК В test-api
-    console.log('🔄 Начинаем обработку продуктов с formatApiProduct...');
+    // console.log('🔄 Начинаем обработку продуктов с formatApiProduct...');
     
     const transformedProducts = await Promise.all(
       limitedProducts.map(async (product, index) => {
-        console.log(`🔄 Обрабатываем продукт ${index + 1}/${limitedProducts.length}: ${product.Name}`);
+        // console.log(`🔄 Обрабатываем продукт ${index + 1}/${limitedProducts.length}: ${product.Name}`);
         
         try {
           // ✅ Получаем модели для этого продукта (КАК В test-api)
           const models = await fetchModels(product.slug);
-          console.log(`🎨 Для продукта ${product.slug} найдено ${models.length} моделей`);
+          // console.log(`🎨 Для продукта ${product.slug} найдено ${models.length} моделей`);
           
           // ✅ Форматируем продукт с моделями (КАК В test-api)
           const formatted = await formatApiProduct(product, models);
-          console.log(`✅ Продукт ${product.slug} отформатирован`);
+          // console.log(`✅ Продукт ${product.slug} отформатирован`);
           
           // ✅ Преобразуем в нужный формат для фронтенда
           const result = {
@@ -96,13 +96,13 @@ export async function GET(request: NextRequest) {
             rating: 4.0 + Math.random(),
           };
           
-          console.log(`🎯 Результат для фронтенда:`, {
-            slug: result.slug,
-            imageUrl: result.imageUrl,
-            colorsCount: result.colors.length,
-            sizesCount: result.sizes.length,
-            hasRealImage: !result.imageUrl.includes('placehold')
-          });
+          // console.log(`🎯 Результат для фронтенда:`, {
+          //   slug: result.slug,
+          //   imageUrl: result.imageUrl,
+          //   colorsCount: result.colors.length,
+          //   sizesCount: result.sizes.length,
+          //   hasRealImage: !result.imageUrl.includes('placehold')
+          // });
           
           return result;
           
@@ -127,20 +127,20 @@ export async function GET(request: NextRequest) {
             rating: 4.0 + Math.random(),
           };
           
-          console.log(`⚠️ Используем fallback для продукта ${product.slug}`);
+          // console.log(`⚠️ Используем fallback для продукта ${product.slug}`);
           return fallback;
         }
       })
     );
     
-    console.log('✅ Все продукты обработаны в API route');
-    console.log('🔍 Первый продукт для проверки:', {
-      slug: transformedProducts[0]?.slug,
-      imageUrl: transformedProducts[0]?.imageUrl,
-      colorsCount: transformedProducts[0]?.colors?.length,
-      sizesCount: transformedProducts[0]?.sizes?.length,
-      hasRealImage: transformedProducts[0]?.imageUrl && !transformedProducts[0].imageUrl.includes('placehold')
-    });
+    // console.log('✅ Все продукты обработаны в API route');
+    // console.log('🔍 Первый продукт для проверки:', {
+    //   slug: transformedProducts[0]?.slug,
+    //   imageUrl: transformedProducts[0]?.imageUrl,
+    //   colorsCount: transformedProducts[0]?.colors?.length,
+    //   sizesCount: transformedProducts[0]?.sizes?.length,
+    //   hasRealImage: transformedProducts[0]?.imageUrl && !transformedProducts[0].imageUrl.includes('placehold')
+    // });
     
     return Response.json({
       products: transformedProducts,

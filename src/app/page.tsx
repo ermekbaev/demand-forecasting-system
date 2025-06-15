@@ -56,7 +56,7 @@ export default function HomePage() {
           throw new Error('Ошибка загрузки продуктов');
         }
         const productsData = await productsResponse.json();
-        console.log('📡 Ответ API товаров:', productsData);
+        // console.log('📡 Ответ API товаров:', productsData);
         
         // Преобразуем данные в нужный формат и добавляем дополнительные поля
         const transformedProducts = productsData.products?.map((product: any) => ({
@@ -70,7 +70,7 @@ export default function HomePage() {
         })) || [];
         
         setProducts(transformedProducts);
-        console.log('🛍️ Загружено товаров на главную страницу:', transformedProducts.length);
+        // console.log('🛍️ Загружено товаров на главную страницу:', transformedProducts.length);
 
         // Загружаем категории
         const categoriesResponse = await fetch('/api/categories');
@@ -93,7 +93,7 @@ export default function HomePage() {
 
   // Обработчики действий с товарами
   const handleProductAction = async (action: string, product: Product) => {
-    console.log(`${action}:`, product);
+    // console.log(`${action}:`, product);
     
     switch (action) {
       case 'add-to-cart':

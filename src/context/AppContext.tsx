@@ -211,7 +211,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Функции для работы с продуктами
   const refreshProducts = () => {
     // Здесь будет логика загрузки продуктов из API
-    console.log('Refreshing products...');
+    // console.log('Refreshing products...');
   };
 
   const filterProductsByCategory = (categoryName: string) => {
@@ -230,7 +230,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const refreshCategories = () => {
     // Здесь будет логика загрузки категорий из API
-    console.log('Refreshing categories...');
+    // console.log('Refreshing categories...');
   };
 
   // Функции для работы с корзиной

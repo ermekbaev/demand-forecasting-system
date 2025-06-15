@@ -39,53 +39,53 @@ export const formatApiProduct = async (
   // Собираем данные о цветах из моделей
   let modelColors: string[] = [];
   
-  console.log(`🎨 Обрабатываем цвета для продукта: ${item.Name}`);
-  console.log('Модели для продукта:', models);
+  // console.log(`🎨 Обрабатываем цвета для продукта: ${item.Name}`);
+  // console.log('Модели для продукта:', models);
   
   if (models && models.length > 0) {
     const matchingModels = models.filter((model: Model) => 
       model.product?.slug === item.slug
     );
     
-    console.log('Подходящие модели:', matchingModels);
+    // console.log('Подходящие модели:', matchingModels);
     
     if (matchingModels.length > 0) {
       matchingModels.forEach((model: Model, index: number) => {
-        console.log(`Модель ${index}:`, model);
-        console.log(`Цвет модели ${index}:`, model.colors); // Изменено с model.color на model.colors
+        // console.log(`Модель ${index}:`, model);
+        // console.log(`Цвет модели ${index}:`, model.colors); // Изменено с model.color на model.colors
         
         if (model.colors && model.colors.Name) {  // Изменено с model.color на model.colors
           if (!modelColors.includes(model.colors.Name)) {
             modelColors.push(model.colors.Name);
-            console.log(`✅ Добавлен цвет: ${model.colors.Name}`);
+            // console.log(`✅ Добавлен цвет: ${model.colors.Name}`);
           } else {
-            console.log(`⚠️ Цвет уже добавлен: ${model.colors.Name}`);
+            // console.log(`⚠️ Цвет уже добавлен: ${model.colors.Name}`);
           }
         } else {
-          console.log(`❌ У модели ${index} нет цвета или имени цвета`);
+          // console.log(`❌ У модели ${index} нет цвета или имени цвета`);
         }
       });
     } else {
-      console.log('❌ Нет подходящих моделей для продукта');
+      // console.log('❌ Нет подходящих моделей для продукта');
     }
   } else {
-    console.log('❌ Модели не найдены или пустой массив');
+    // console.log('❌ Модели не найдены или пустой массив');
   }
   
   // Проверяем цвета напрямую из продукта
   let directColors: string[] = [];
   if (item.colors && Array.isArray(item.colors)) {
-    console.log('Прямые цвета из продукта:', item.colors);
+    // console.log('Прямые цвета из продукта:', item.colors);
     directColors = item.colors.map(c => c?.Name || '').filter(Boolean);
-    console.log('Обработанные прямые цвета:', directColors);
+    // console.log('Обработанные прямые цвета:', directColors);
   } else {
-    console.log('❌ Прямые цвета не найдены в продукте');
+    // console.log('❌ Прямые цвета не найдены в продукте');
   }
   
   // Определяем итоговый список цветов
   const finalColors = modelColors.length > 0 ? modelColors : directColors;
   
-  console.log('🎯 Итоговые цвета:', finalColors);
+  // console.log('🎯 Итоговые цвета:', finalColors);
   
   // Собираем информацию о категориях
   const categoryNames: string[] = [];
